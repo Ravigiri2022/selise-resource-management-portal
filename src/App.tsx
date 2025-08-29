@@ -1,21 +1,17 @@
-import React from 'react';
-import { Routes, Route, Outlet, Link } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
+// import { Routes, Route, Link } from 'react-router-dom';
+// import Dashboard from './pages/Dashboard';
 // import EmployeeDashboard from './pages/EmployeeDashboard';
 // import TaskDetails from './pages/TaskDetails';
+// import { useUsers } from './context/UserProvider'
+// import { Navbar } from './components/Navbar';
+import AppRoutes from './routes';
+
 
 function App() {
+  // const { selectedUser } = useUsers();
+
   return (
-    <>
-      <nav className="bg-gray-200 p-4">
-        <Link to="/">Manager</Link> | <Link to="/employee">Employee</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        {/* <Route path="/employee" element={<EmployeeDashboard />} />
-        <Route path="/task/:id" element={<TaskDetails />} /> */}
-      </Routes>
-    </>
+    <AppRoutes />
   );
 }
 

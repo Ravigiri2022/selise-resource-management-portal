@@ -4,18 +4,24 @@ export type User = {
   id: number;
   name: string;
   role: Role;
-  availability?: string;
+  jobTitle: string;
 };
 
 export type Task = {
   id: number;
   title: string;
   description: string;
-  assignedTo: number;
-  createdBy: number;
+  assignedTo: number[];
+  assignedBy: number;
   startDate: string;
   endDate: string;
   status: "pending" | "in-progress" | "completed";
   priority: "low" | "medium" | "high";
-  order: number;
+  subTopics?: SubTopic[];
+};
+
+export type SubTopic = {
+  id: number;
+  title: string;
+  done: boolean;
 };
