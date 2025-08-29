@@ -14,7 +14,10 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedUser, setSelectedUser] = useState<User | null>(() => {
+        const saved = localStorage.getItem("selectedUser");
+        return saved ? JSON.parse(saved) : null;
+    });
     const [loading, setLoading] = useState(true);
 
     const API_URL = "http://localhost:5500/users";
@@ -28,10 +31,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     // Select a user
-    const selectUser = (user: User) => setSelectedUser(user);
+    const selectUser = (user: User) => {
+        setSelectedUser(user);
+        localStorage.setItem("selectedUser", JSON.stringify(user));
+    };
 
     // Deselect user (log out)
-    const deselectUser = () => setSelectedUser(null);
+    const deselectUser = () => {
+        setSelectedUser(null);
+        localStorage.removeItem("selectedUser");
+    };
 
     return (
         <UserContext.Provider

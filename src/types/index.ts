@@ -5,6 +5,7 @@ export type User = {
   name: string;
   role: Role;
   jobTitle: string;
+  colorHex: string;
 };
 
 export type Task = {

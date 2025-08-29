@@ -4,19 +4,22 @@
       "id": 1,
       "name": "Ravi Giri",
       "role": "manager",
-      "jobTitle": "Project Manager"
+      "jobTitle": "Project Manager",
+      "colorHex": "#F56565"
     },
     {
       "id": 2,
       "name": "John Doe",
       "role": "employee",
-      "jobTitle": "Software Engineer"
+      "jobTitle": "Software Engineer",
+      "colorHex": "#F56565"
     },
     {
       "id": 3,
       "name": "Jane Smith",
       "role": "employee",
-      "jobTitle": "UI Designer"
+      "jobTitle": "UI Designer",
+      "colorHex": "#F56565"
     }
   ],
 

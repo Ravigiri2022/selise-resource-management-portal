@@ -2,16 +2,25 @@
 // import Dashboard from './pages/Dashboard';
 // import EmployeeDashboard from './pages/EmployeeDashboard';
 // import TaskDetails from './pages/TaskDetails';
-// import { useUsers } from './context/UserProvider'
-// import { Navbar } from './components/Navbar';
+import { useUsers } from './context/UserProvider'
+import { Navbar } from './components/Navbar';
 import AppRoutes from './routes';
 
 
 function App() {
-  // const { selectedUser } = useUsers();
+  const { selectedUser } = useUsers();
 
   return (
-    <AppRoutes />
+    <div className='flex flex-col min-h-screen'>
+      {selectedUser && (
+        <Navbar />
+      )}
+      <main className='flex-1'>
+        <AppRoutes />
+      </main>
+    </div>
+
+    // <AppRoutes />
   );
 }
 

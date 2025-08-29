@@ -1,3 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@font-face {
+  font-family: "Rooster";
+  src: url("./assets/fonts/ROOSTER.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
