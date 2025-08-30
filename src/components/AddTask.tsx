@@ -8,6 +8,8 @@ import { AiOutlineDelete } from "react-icons/ai";
 import TextareaAutosize from "react-textarea-autosize";
 import { AiOutlineLink } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
+import axios from "axios";
+
 
 
 
@@ -18,7 +20,7 @@ interface AddTaskPopopProps {
 interface FormValues {
     title: string;
     desc: string;
-    assignedTo: { id: number, name: string }[];
+    assignedTo: { userId: number, name: string }[];
     startDate: string;
     endDate: string;
     priority: string;
@@ -29,7 +31,7 @@ interface FormValues {
 }
 
 const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
-    const { users } = useUsers();
+    const { users, selectedUser } = useUsers();
     const { register, handleSubmit, control, reset } = useForm<FormValues>({
         defaultValues: {
             assignedTo: [],
@@ -37,10 +39,6 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
         },
     });
 
-    // const { fields: miniTasks, append: add, remove } = useFieldArray({
-    //     control,
-    //     name: "miniTasks",
-    // });
     const { fields: userFields, append: addUser, remove: removeUser } = useFieldArray({
         control, name: "assignedTo"
     })
@@ -49,14 +47,46 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
         control,
         name: "miniTasks"
     })
-
+    const generateId = () => Math.floor(1000 + Math.random() * 9000);
     const onSubmit = async (data: FormValues) => {
-        console.log(data);
-    }
+        try {
+            const payload = {
+                id: generateId, // or use any unique id generator
+                title: data.title,
+                description: data.desc,
+                assignedBy: selectedUser?.id, // your current manager id from context
+                assignedTo: data.assignedTo.map(user => Number(user.userId)), // array of user ids
+                startDate: data.startDate,
+                endDate: data.endDate,
+                status: "in-progress", // default status
+                priority: data.priority,
+                pdfLink: data.pdfLink,
+                githubLink: data.githubLink,
+                subtopics: data.miniTasks.map((t, idx) => ({
+                    id: idx + 1,
+                    title: t.task,
+                    done: false
+                }))
+            };
+
+            const response = await axios.post("http://localhost:5500/tasks", payload, {
+                headers: { "Content-Type": "application/json" }
+            });
+
+            console.log("Task created:", response.data);
+
+            reset();
+            onClose();
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
 
     const [showDropDown, setShowDropDown] = useState(false);
 
-    const isUserSelected = (id: string) => userFields.some((field) => field.id === id);
+    const isUserSelected = (id: number) => userFields.some((field) => field.userId === id);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
@@ -94,7 +124,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                                 className="relative flex items-center gap-2 px-2 py-1 rounded-full">
                                                 <div className="group">
                                                     <span className="absolute z-10 hidden group-hover:block bg-white whitespace-nowrap p-0.5 rounded shadow-lg top-[-10px]">{field.name} </span>
-                                                    <ProfileCircle name={field.name} colorHex="#F56565" size={40} />
+                                                    <ProfileCircle name={field.name} colorHex={users.find(u => u.id === Number(field.userId))?.colorHex || "#F56565"} size={40} />
                                                 </div>
 
                                                 <button className="text-gray-500 z-0 p-0.5 bg-white rounded-full border absolute right-1 cursor-pointer hover:text-red-500 top-0" onClick={() => removeUser(index)}>
@@ -120,7 +150,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                                         <div key={user.id} className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${isUserSelected(user.id) ? "opacity-50 cursor-not-allowed" : ""}`}
                                                             onClick={() => {
                                                                 if (!isUserSelected(user.id)) {
-                                                                    addUser({ id: user.id, name: user.name });
+                                                                    addUser({ userId: user.id, name: user.name });
                                                                     setShowDropDown(false);
                                                                 }
                                                             }}>
