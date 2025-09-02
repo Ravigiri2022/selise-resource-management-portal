@@ -1,121 +1,160 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Ravi Giri",
-      "role": "manager",
-      "jobTitle": "Project Manager",
-      "colorHex": "#F56565"
-    },
-    {
-      "id": "2",
+      "id": 1,
       "name": "John Doe",
       "role": "employee",
+      "availability": [5, 5, 5, 5, 5, 5, 0],
       "jobTitle": "Software Engineer",
       "colorHex": "#F56565"
     },
     {
-      "id": "3",
-      "name": "Jane Smith",
+      "id": 2,
+      "name": "Mary Smith",
       "role": "employee",
+      "availability": [5, 5, 5, 5, 5, 5, 0],
       "jobTitle": "UI Designer",
+      "colorHex": "#F56565"
+    },
+    {
+      "id": 3,
+      "name": "Alex Johnson",
+      "role": "employee",
+      "availability": [5, 5, 5, 5, 5, 5, 0],
+      "jobTitle": "Frontend Developer",
+      "colorHex": "#F56565"
+    },
+    {
+      "id": 4,
+      "name": "Sarah Lee",
+      "role": "manager",
+      "jobTitle": "Project Manager",
       "colorHex": "#F56565"
     }
   ],
+
   "tasks": [
     {
-      "id": "101",
-      "title": "Build Task Management System",
-      "description": "Create a React + JSON server app for managing tasks.",
-      "assignedBy": 1,
-      "assignedTo": [
-        2,
-        3
-      ],
-      "startDate": "2025-08-29",
-      "endDate": "2025-09-10",
+      "id": 101,
+      "title": "Backend API Development",
+      "description": "Develop authentication and user API endpoints",
+      "assignedBy": 4,
+      "assignedTo": 1,
       "status": "in-progress",
       "priority": "high",
+      "startDate": "2025-09-02",
+      "endDate": "2025-09-04",
+      "createdDate": "2025-09-02",
       "pdfLink": "http://example.com/specs.pdf",
-      "subtopics": [
-        {
-          "id": 1,
-          "title": "Set up project repo",
-          "done": true
-        },
-        {
-          "id": 2,
-          "title": "Create User Context",
-          "done": true
-        },
-        {
-          "id": 3,
-          "title": "Create Task Context",
-          "done": false
-        },
-        {
-          "id": 4,
-          "title": "Setup JSON server",
-          "done": false
-        },
-        {
-          "id": 5,
-          "title": "Implement Dashboard UI",
-          "done": false
-        },
-        {
-          "id": 6,
-          "title": "Add authentication",
-          "done": false
-        },
-        {
-          "id": 7,
-          "title": "Assign tasks to employees",
-          "done": false
-        },
-        {
-          "id": 8,
-          "title": "Subtopic tick system",
-          "done": false
-        },
-        {
-          "id": 9,
-          "title": "Calculate progress",
-          "done": false
-        },
-        {
-          "id": 10,
-          "title": "Polish UI/UX",
-          "done": false
-        }
-      ]
+      "githubLink": "opop",
+      "projectId": 201
     },
     {
-      "id": "679d",
-      "title": "RMP",
-      "description": "F56565",
-      "assignedBy": "1",
-      "assignedTo": [
-        1
-      ],
-      "startDate": "2025-08-30",
-      "endDate": "2025-08-31",
-      "status": "in-progress",
-      "priority": "low",
-      "pdfLink": "op",
+      "id": 102,
+      "title": "UI Design Mockups",
+      "description": "Create mobile and web mockups for the dashboard",
+      "assignedBy": 4,
+      "assignedTo": 2,
+      "status": "todo",
+      "priority": "medium",
+      "startDate": "2025-09-03",
+      "endDate": "2025-09-06",
+      "createdDate": "2025-09-02",
+      "pdfLink": "http://example.com/specs.pdf",
       "githubLink": "opop",
-      "subtopics": [
-        {
-          "id": 1,
-          "title": "pop",
-          "done": false
-        },
-        {
-          "id": 2,
-          "title": "iooi",
-          "done": false
-        }
-      ]
+      "projectId": 201
+    },
+    {
+      "id": 103,
+      "title": "Database Schema Setup",
+      "description": "Design initial schema for users and tasks",
+      "assignedBy": 4,
+      "assignedTo": 3,
+      "status": "done",
+      "priority": "high",
+      "startDate": "2025-08-28",
+      "endDate": "2025-08-30",
+      "createdDate": "2025-09-02",
+      "pdfLink": "http://example.com/specs.pdf",
+      "githubLink": "opop",
+      "projectId": 201
+    },
+    {
+      "id": 104,
+      "title": "API Testing",
+      "description": "Write unit tests for backend API",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "status": "todo",
+      "priority": "high",
+      "startDate": "2025-09-03",
+      "endDate": "2025-09-05",
+      "createdDate": "2025-09-02",
+      "pdfLink": "http://example.com/specs.pdf",
+      "githubLink": "opop",
+      "projectId": 201
+    },
+    {
+      "id": 105,
+      "title": "Client Presentation",
+      "description": "Prepare slides for client meeting",
+      "assignedBy": 4,
+      "assignedTo": 2,
+      "status": "todo",
+      "priority": "low",
+      "startDate": "2025-09-07",
+      "endDate": "2025-09-07",
+      "createdDate": "2025-09-02",
+      "pdfLink": "http://example.com/specs.pdf",
+      "githubLink": "opop",
+      "projectId": 202
+    }
+  ],
+
+  "projects": [
+    {
+      "id": 201,
+      "name": "Website Revamp",
+      "members": [1, 2, 3],
+      "tasks": [101, 102, 103, 104]
+    },
+    {
+      "id": 202,
+      "name": "Client Portal",
+      "members": [2],
+      "tasks": [105]
+    }
+  ],
+
+  "rescheduleLogs": [
+    {
+      "id": 1,
+      "taskId": 104,
+      "employeeId": 1,
+      "requestedBy": "employee",
+      "requestedDate": "2025-09-02",
+      "oldStartDate": "2025-09-03",
+      "oldEndDate": "2025-09-05",
+      "newStartDate": "2025-09-04",
+      "newEndDate": "2025-09-06",
+      "reason": "Task overlaps with Backend API Development",
+      "status": "pending",
+      "actionBy": null
+    },
+    {
+      "id": 2,
+      "taskId": 105,
+      "employeeId": 2,
+      "requestedBy": "employee",
+      "requestedDate": "2025-09-02",
+      "oldStartDate": "2025-09-07",
+      "oldEndDate": "2025-09-07",
+      "newStartDate": "2025-09-08",
+      "newEndDate": "2025-09-08",
+      "reason": "Need more time to prepare client slides",
+      "status": "approved",
+      "actionBy": 4,
+      "actionDate": "2025-09-03"
     }
   ]
 }

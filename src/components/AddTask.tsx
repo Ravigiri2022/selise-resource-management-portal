@@ -9,6 +9,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { AiOutlineLink } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
 import axios from "axios";
+import type { FormValues } from "../types";
 
 
 
@@ -17,18 +18,7 @@ interface AddTaskPopopProps {
     onClose: () => void;
 }
 
-interface FormValues {
-    title: string;
-    desc: string;
-    assignedTo: { userId: number, name: string }[];
-    startDate: string;
-    endDate: string;
-    priority: string;
-    miniTasks: { task: string }[];
-    pdfLink: string;
-    githubLink: string;
 
-}
 
 const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
     const { users, selectedUser } = useUsers();
