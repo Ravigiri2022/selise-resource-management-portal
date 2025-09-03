@@ -1,15 +1,20 @@
 import { useState } from "react";
 import TaskTable from "../components/TaskTable";
 import { useTasks } from "../context/TaskContext";
+import TaskDetails from "../components/TaskDetails";
+import GanttTable from "../components/GanttTable";
+import type { Task } from "../types";
 const tabs = ["Tasks", "Calander", "Stats"];
+
 
 const ManagerDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
+    const [selectedTask, setSelectedTask] = useState<Task>();
     const { getTasksByManager } = useTasks();
     const tasks = getTasksByManager(4);
     return (
-        <div className="w-full  flex">
-            <div className="w-1/6 flex flex-col shadow-lg h-screen  p-1">
+        <div className="w-full flex">
+            <div className="w-1/6 flex flex-col shadow-lg h-[90vh] p-1">
                 {
                     tabs.map(tab => (
                         <button
@@ -22,16 +27,17 @@ const ManagerDashboard = () => {
                     ))
                 }
             </div>
-            <div>
+            <div className="w-full">
                 {/* Tab Contents */}
                 {activeTab === "Tasks" && (
                     <div>
-                        <TaskTable data={tasks} />
+                        {selectedTask ? <TaskDetails setTask={(value) => setSelectedTask(value)} data={selectedTask} /> : <TaskTable data={tasks} setTask={(value) => setSelectedTask(value)} />}
+
                     </div>
                 )}
                 {activeTab === "Calander" && (
                     <div>
-                        2
+                        <GanttTable tasks={tasks} />
                     </div>
                 )}
                 {activeTab === "Stats" && (

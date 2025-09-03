@@ -10,7 +10,7 @@ export const Navbar = () => {
     }
 
     return (
-        <div className='p-3  flex items-center justify-between border-b-1 select-none'>
+        <div className='p-3  flex items-center justify-between border-b-1 select-none h-[10vh]'>
 
             {isOpened && (
                 <AddTask onClose={closePopop} />

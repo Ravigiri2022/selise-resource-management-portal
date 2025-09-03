@@ -8,7 +8,25 @@ export type User = {
   colorHex: string;
 };
 
+export type resLog = {
+  id: number;
+  taskId: number;
+  employeeId: number;
+  requestedBy: string;
+  requestedDate: string;
+  oldStartDate: string;
+  oldEndDate: string;
+  newStartDate: string;
+  newEndDate: string;
+  reason: string;
+  status: "pending" | "accepted" | "rejected";
+  createdDate: string;
+  actionBy?: number;
+  actionday?: number;
+};
+
 export type Task = {
+  subTopics: any;
   id: number;
   title: string;
   description: string;
@@ -16,7 +34,7 @@ export type Task = {
   assignedBy: number;
   startDate: string;
   endDate: string;
-  status: "pending" | "in-progress" | "done";
+  status: "todo" | "in-progress" | "done" | "reschedule";
   priority: "low" | "medium" | "high";
   createdDate: string;
   pdfLink: string;

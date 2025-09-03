@@ -4,7 +4,15 @@
   padding: 2rem;
   text-align: center;
 }
-
+.task-high {
+  background-color: #f56565 !important;
+}
+.task-medium {
+  background-color: #facc15 !important;
+}
+.task-low {
+  background-color: #34d399 !important;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
