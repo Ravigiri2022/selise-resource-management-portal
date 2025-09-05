@@ -1,0 +1,31 @@
+import api from "./api";
+
+export const taskService = {
+  getAll: async () => {
+    const res = await api.get("/tasks");
+    return res.data;
+  },
+
+  getById: async (id: string | number) => {
+    const res = await api.get(`/tasks/${id}`);
+    return res.data;
+  },
+
+  create: async (task: any) => {
+    const res = await api.post("/tasks", task);
+    return res.data;
+  },
+
+  update: async (id: number, task: any) => {
+    const res = await api.put(`/tasks/?id=${id}`, task);
+    return res.data;
+  },
+
+  updateStatus: async (id: number, status: string) => {
+    const res = await api.patch(`/tasks?id=${id}`, { status });
+    return res.data;
+  },
+  delete: async (id: number) => {
+    await api.delete(`/tasks/${id}`);
+  },
+};

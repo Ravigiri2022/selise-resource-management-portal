@@ -4,7 +4,8 @@ import { useTasks } from "../context/TaskContext";
 import TaskDetails from "../components/TaskDetails";
 import GanttTable from "../components/GanttTable";
 import type { Task } from "../types";
-const tabs = ["Tasks", "Calander", "Stats"];
+import EmployeeList from "../components/EmployeeList";
+const tabs = ["Tasks", "Calander", "Employees"];
 
 
 const ManagerDashboard = () => {
@@ -40,9 +41,9 @@ const ManagerDashboard = () => {
                         <GanttTable tasks={tasks} />
                     </div>
                 )}
-                {activeTab === "Stats" && (
+                {activeTab === "Employees" && (
                     <div>
-                        3
+                        <EmployeeList />
                     </div>
                 )}
             </div>

@@ -9,9 +9,11 @@ type TaskContextType = {
     getTasksByManager: (managerId: number) => Task[];
     getTasksByEmployee: (employeeId: number) => Task[];
     resLogs: resLog[];
+    getResLogsByTaskId: (taskId: number) => resLog[];
 };
 
-const TaskContext = createContext<TaskContextType | undefined>(undefined);
+// eslint-disable-next-line react-refresh/only-export-components
+export const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useTasks = () => {
@@ -27,6 +29,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         try {
             const { data } = await axios.get<Task[]>("http://localhost:5500/tasks");
             setTasks(data);
+            console.log(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
@@ -35,7 +38,6 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         try {
             const { data } = await axios.get<resLog[]>("http://localhost:5500/rescheduleLogs");
             setResLogs(data);
-            console.log(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
@@ -43,8 +45,11 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
 
     //helpers
-    const getTasksByManager = (managerId: number) => tasks.filter((t) => t.assignedBy === managerId);
-    const getTasksByEmployee = (employeeId: number) => tasks.filter((t) => t.assignedTo === employeeId);
+    const getTasksByManager = (managerId: number) => tasks.filter((t) => Number(t.assignedBy) === Number(managerId));
+    const getTasksByEmployee = (employeeId: number) => tasks.filter((t) => Number(t.assignedTo) === Number(employeeId));
+
+    //Log helpers
+    const getResLogsByTaskId = (taskId: number) => resLogs.filter((t) => t.taskId === taskId);
 
     useEffect(() => {
         fetchTasks();
@@ -58,7 +63,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
                 fetchTasks,
                 getTasksByEmployee,
                 getTasksByManager,
-                resLogs
+                resLogs,
+                getResLogsByTaskId
             }}
         >
             {children}

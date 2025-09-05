@@ -32,7 +32,6 @@
       "colorHex": "#F56565"
     }
   ],
-
   "tasks": [
     {
       "id": 101,
@@ -40,7 +39,7 @@
       "description": "Develop authentication and user API endpoints",
       "assignedBy": 4,
       "assignedTo": 1,
-      "status": "in-progress",
+      "status": "unseen",
       "priority": "high",
       "startDate": "2025-09-02 00:00",
       "endDate": "2025-09-04 24:00",
@@ -108,9 +107,22 @@
       "pdfLink": "http://example.com/specs.pdf",
       "githubLink": "opop",
       "projectId": 202
+    },
+    {
+      "id": 5940,
+      "title": "text 1",
+      "description": "test",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "startDate": "2025-09-05 00:00",
+      "endDate": "2025-09-30 23:59",
+      "status": "unseen",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-05"
     }
   ],
-
   "projects": [
     {
       "id": 201,
@@ -125,37 +137,55 @@
       "tasks": [105]
     }
   ],
-
   "rescheduleLogs": [
     {
       "id": 1,
       "taskId": 104,
-      "employeeId": 1,
       "requestedBy": "employee",
-      "requestedDate": "2025-09-02",
-      "oldStartDate": "2025-09-03",
-      "oldEndDate": "2025-09-05",
-      "newStartDate": "2025-09-04",
-      "newEndDate": "2025-09-06",
+      "requestedById": 4,
+      "createdAt": "2025-09-02",
+      "oldStartDate": "2025-09-03 00:00",
+      "oldEndDate": "2025-09-05 12:00",
+      "newStartDate": "2025-09-04 00:00",
+      "newEndDate": "2025-09-06 12:00",
       "reason": "Task overlaps with Backend API Development",
       "status": "pending",
+      "rescheduleLogId": null,
       "actionBy": null,
       "actionDate": null
     },
     {
       "id": 2,
       "taskId": 105,
-      "employeeId": 2,
       "requestedBy": "employee",
-      "requestedDate": "2025-09-02",
-      "oldStartDate": "2025-09-07",
-      "oldEndDate": "2025-09-07",
-      "newStartDate": "2025-09-08",
-      "newEndDate": "2025-09-08",
+      "requestedById": 2,
+      "createdAt": "2025-09-02",
+      "oldStartDate": "2025-09-07 00:00",
+      "oldEndDate": "2025-09-07 12:00",
+      "newStartDate": "2025-09-08 00:00",
+      "newEndDate": "2025-09-08 12:00",
       "reason": "Need more time to prepare client slides",
-      "status": "approved",
+      "status": "rejected",
+      "rescheduleLogId": 3,
       "actionBy": 4,
-      "actionDate": "2025-09-03"
+      "actionDate": "2025-09-03",
+      "actionMesg": "I am not comfortable with this date adhasjhiahsidhas sbdhabisdb sudhbausd hsbdausd "
+    },
+    {
+      "id": 3,
+      "taskId": 105,
+      "requestedBy": "manager",
+      "requestedById": 4,
+      "createdAt": "2025-09-03",
+      "oldStartDate": "2025-09-08",
+      "oldEndDate": "2025-09-08",
+      "newStartDate": "2025-09-07",
+      "newEndDate": "2025-09-07",
+      "reason": "I really need the old timing!!!",
+      "status": "pending",
+      "rescheduleLogId": null,
+      "actionBy": null,
+      "actionDate": null
     }
   ]
 }

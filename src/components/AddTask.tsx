@@ -8,8 +8,10 @@ import { AiOutlineDelete } from "react-icons/ai";
 import TextareaAutosize from "react-textarea-autosize";
 import { AiOutlineLink } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
-import axios from "axios";
+// import axios from "axios";
 import type { FormValues } from "../types";
+import { taskService } from "../services/taskService";
+import { useTasks } from "../context/TaskContext";
 
 
 
@@ -28,46 +30,58 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
             miniTasks: []
         },
     });
-
+    const { fetchTasks } = useTasks();
     const { fields: userFields, append: addUser, remove: removeUser } = useFieldArray({
         control, name: "assignedTo"
     })
 
-    const { fields: miniTasksFields, append: addMiniTask, remove: removeMiniTask } = useFieldArray({
-        control,
-        name: "miniTasks"
-    })
+    // const { fields: miniTasksFields, append: addMiniTask, remove: removeMiniTask } = useFieldArray({
+    //     control,
+    //     name: "miniTasks"
+    // })
     const generateId = () => Math.floor(1000 + Math.random() * 9000);
+    const formatDateWithTime = (date: string, isEnd: boolean = false) => {
+        if (!date) return null;
+        return isEnd ? `${date} 23:59` : `${date} 00:00`;
+    };
+    const getToday = () => {
+        const today = new Date();
+        return today.toISOString().split("T")[0]; // => "2025-09-02"
+    };
+
     const onSubmit = async (data: FormValues) => {
         try {
             const payload = {
-                id: generateId, // or use any unique id generator
+                id: generateId(), // or use any unique id generator
                 title: data.title,
                 description: data.desc,
                 assignedBy: selectedUser?.id, // your current manager id from context
-                assignedTo: data.assignedTo.map(user => Number(user.userId)), // array of user ids
-                startDate: data.startDate,
-                endDate: data.endDate,
-                status: "in-progress", // default status
+                assignedTo: Number(data.assignedTo[0].userId), // array of user ids
+                startDate: formatDateWithTime(data.startDate, false),
+                endDate: formatDateWithTime(data.endDate, true),
+                status: "unseen", //default
                 priority: data.priority,
                 pdfLink: data.pdfLink,
                 githubLink: data.githubLink,
-                subtopics: data.miniTasks.map((t, idx) => ({
-                    id: idx + 1,
-                    title: t.task,
-                    done: false
-                }))
+                createdDate: getToday(),
+                // subtopics: data.miniTasks.map((t, idx) => ({
+                //     id: idx + 1,
+                //     title: t.task,
+                //     done: false
+                // }))
             };
 
-            const response = await axios.post("http://localhost:5500/tasks", payload, {
-                headers: { "Content-Type": "application/json" }
-            });
+            const saved = await taskService.create(payload);
+            if (saved) {
+                console.log("Task created:", saved);
+                onClose();
+                reset();
+                fetchTasks();
 
-            console.log("Task created:", response.data);
-
-            reset();
-            onClose();
-
+            }
+            // const response = await axios.post("http://localhost:5500/tasks", payload, {
+            //     headers: { "Content-Type": "application/json" }
+            // });
         } catch (err) {
             console.error(err);
         }
@@ -79,7 +93,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
     const isUserSelected = (id: number) => userFields.some((field) => field.userId === id);
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/50">
             <div className="relative bg-white rounded-lg max-h-[80%] w-1/2 overflow-x-scroll shadow-lg p-6">
                 <h2 className="text-2xl font-sans font-bold mb-4 p-3">Add Task: </h2>
                 <div className="absolute top-0 right-0 pr-9 pt-7 text-xl cursor-pointer" onClick={onClose}>
@@ -101,7 +115,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                             />
 
                             <div className="relative max-w-full">
-                                <label className="block text-sm font-sans pl-2 pb-1">Asigned to:  </label>
+                                <label className="block text-sm font-sans pl-2 pb-1">Assigned to:  </label>
                                 <div className="flex items-center justify-around min-h-18 px-2 border border-dashed ">
                                     <p className="font-sans font-bold text-sm mr-2">
                                         Users:
@@ -141,6 +155,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                                             onClick={() => {
                                                                 if (!isUserSelected(user.id)) {
                                                                     addUser({ userId: user.id, name: user.name });
+
                                                                     setShowDropDown(false);
                                                                 }
                                                             }}>
@@ -164,7 +179,6 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                 <div className="w-full">
                                     <h2 className="font-mono text-sm pl-2 mb-1">End Date :</h2>
                                     <input type="date" {...register("endDate", { required: true })} className="border p-2 rounded w-full" />
-
                                 </div>
                             </div>
                             <div>
@@ -178,7 +192,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
 
 
                             {/* miniTasks */}
-                            <div className="border border-dotted p-3">
+                            {/* <div className="border border-dotted p-3">
                                 <h1 className="mb-2 font-mono text-sm">Mini Tasks: </h1>
                                 {miniTasksFields.map((field, index) => (
                                     <div key={field.id} className="flex items-center gap-2 mb-2">
@@ -195,7 +209,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                 <button type="button" onClick={() => addMiniTask({ task: "" })}
                                     className="text-blue-500"> + Add Mini Task
                                 </button>
-                            </div>
+                            </div> */}
                             <div className="flex border p-2 rounded w-full items-center space-x-2">
                                 <AiOutlineLink />
                                 <input {...register("pdfLink")}
@@ -224,3 +238,4 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
 }
 
 export default AddTask
+
