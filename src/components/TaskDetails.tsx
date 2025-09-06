@@ -182,7 +182,7 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                 {/* Gantt + Reschedule Logs */}
                 <div className="space-y-6">
                     <GanttTable tasks={[data]} />
-                    <RescheduleLog resLogs={resLogs} />
+                    <RescheduleLog resLogs={resLogs} task={data} />
                 </div>
             </div>
         </div>

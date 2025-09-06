@@ -1,12 +1,61 @@
 import { AiOutlineArrowRight, AiOutlineClose } from "react-icons/ai";
-import type { resLog } from "../types";
+import type { resLog, Task } from "../types";
 import { useUsers } from "../context/UserProvider";
 import { useState } from "react";
+import { logService, taskService } from "../services/taskService";
+import { useTasks } from "../context/TaskContext";
 
-const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
+const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, task }) => {
     const { users, selectedUser, addToast } = useUsers();
+    const { fetchTasks } = useTasks();
     const [logAction, setLogAction] = useState("");
-    const [log, setLog] = useState<resLog | null>();
+    const [log, setLog] = useState<resLog | null>(null);
+    const [message, setMessage] = useState<string>("");
+
+
+    const handleSubmit = async (message: string, status: "accepted" | "rejected") => {
+        if (!message.trim()) {
+            addToast("error", "Need to Write the Message", 2000);
+            return;
+        }
+        if (!log) return;
+        const updatedLog = {
+            ...log,
+            actionMesg: message,
+            status: status,
+            actionDate: Date.now(),
+            actionBy: selectedUser?.id,
+        }
+        let updatedTask: Task;
+        if (status === "accepted") {
+            updatedTask = {
+                ...task,
+                status: "todo",
+            }
+        } else {
+            updatedTask = {
+                ...task,
+                status: "todo",
+                startDate: updatedLog.oldStartDate,
+                endDate: updatedLog.oldEndDate,
+            }
+        }
+
+        try {
+            await logService.update(log?.id, updatedLog)
+            setLog(updatedLog);
+            setMessage("");
+            await taskService.update(task.id, updatedTask)
+            fetchTasks();
+            addToast("successfully ", `Task ${status}`, 2000)
+
+        } catch (err) {
+            console.log(err);
+            addToast("error", "err", 2000);
+        }
+
+
+    }
 
     return (
         <div className="bg-white h-fit m-2 rounded-xl p-4 border border-gray-300 shadow-md">
@@ -67,6 +116,9 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                     <label className="font-semibold">Message:</label>
                                     <textarea
                                         rows={4}
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        required
                                         className="border w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-300"
                                     ></textarea>
 
@@ -81,7 +133,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                             Cancel
                                         </button>
                                         <button className="bg-green-600 text-white px-4 py-1.5 rounded-lg hover:bg-green-500"
-                                            onClick={() => addToast("error", "Operation success", 2000)}>
+                                            onClick={() => handleSubmit(message, "accepted")}>
 
                                             Confirm
                                         </button>
@@ -130,7 +182,10 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                         >
                                             Cancel
                                         </button>
-                                        <button className="bg-red-600 text-white px-4 py-1.5 rounded-lg hover:bg-red-500">
+                                        <button
+                                            className="bg-red-600 text-white px-4 py-1.5 rounded-lg hover:bg-red-500"
+                                            onClick={() => handleSubmit(message, "rejected")}
+                                        >
                                             Confirm
                                         </button>
                                     </div>
@@ -172,7 +227,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                 </p>
                                 <p>
                                     <span className="font-semibold">Initiated By:</span>{" "}
-                                    {users.find((u) => u?.id === log?.requestedById)?.name}
+                                    {users.find((u) => Number(u?.id) === Number(log?.requestedById))?.name}
                                 </p>
                                 <p>
                                     <span className="font-semibold">Message:</span> {log.reason}
@@ -209,7 +264,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                     {log.actionDate || "xxxx-xx-xx"}
                                 </p>
 
-                                {log.requestedById !== selectedUser?.id ? (
+                                {Number(log.requestedById) !== Number(selectedUser?.id) && log.status === "pending" ? (
                                     <div className="flex items-center gap-2">
                                         <span className="font-semibold">Action:</span>
                                         <button
@@ -235,7 +290,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
                                     <p>
                                         <span className="font-semibold">Action By:</span>{" "}
                                         {log.actionBy
-                                            ? users.find((u) => u?.id === log?.actionBy)?.name
+                                            ? users.find((u) => Number(u?.id) === Number(log?.actionBy))?.name
                                             : "-------"}
                                     </p>
                                 )}
