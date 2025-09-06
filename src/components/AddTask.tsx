@@ -1,44 +1,31 @@
-import { AiOutlineClose } from "react-icons/ai";
-import { useUsers } from "../context/UserProvider"
+import { AiOutlineClose, AiFillPlusCircle, AiOutlineDelete, AiOutlineLink, AiOutlineGithub } from "react-icons/ai";
+import { useUsers } from "../context/UserProvider";
 import { useForm, useFieldArray } from "react-hook-form";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ProfileCircle from "./ProfileCircle";
-import { AiFillPlusCircle } from "react-icons/ai";
-import { AiOutlineDelete } from "react-icons/ai";
 import TextareaAutosize from "react-textarea-autosize";
-import { AiOutlineLink } from "react-icons/ai";
-import { AiOutlineGithub } from "react-icons/ai";
-// import axios from "axios";
 import type { FormValues } from "../types";
 import { taskService } from "../services/taskService";
 import { useTasks } from "../context/TaskContext";
-
-
-
 
 interface AddTaskPopopProps {
     onClose: () => void;
 }
 
-
-
 const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
-    const { users, selectedUser } = useUsers();
+    const { users, selectedUser, addToast, removeToast } = useUsers();
     const { register, handleSubmit, control, reset } = useForm<FormValues>({
         defaultValues: {
             assignedTo: [],
-            miniTasks: []
+            miniTasks: [],
         },
     });
     const { fetchTasks } = useTasks();
     const { fields: userFields, append: addUser, remove: removeUser } = useFieldArray({
-        control, name: "assignedTo"
-    })
+        control,
+        name: "assignedTo",
+    });
 
-    // const { fields: miniTasksFields, append: addMiniTask, remove: removeMiniTask } = useFieldArray({
-    //     control,
-    //     name: "miniTasks"
-    // })
     const generateId = () => Math.floor(1000 + Math.random() * 9000);
     const formatDateWithTime = (date: string, isEnd: boolean = false) => {
         if (!date) return null;
@@ -46,196 +33,203 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
     };
     const getToday = () => {
         const today = new Date();
-        return today.toISOString().split("T")[0]; // => "2025-09-02"
+        return today.toISOString().split("T")[0];
     };
+    const loadingIdRef = useRef<number>(0);
 
     const onSubmit = async (data: FormValues) => {
         try {
+            loadingIdRef.current = Number(addToast("loading", "Loading ...", 0))
             const payload = {
-                id: generateId(), // or use any unique id generator
+                id: generateId(),
                 title: data.title,
                 description: data.desc,
-                assignedBy: selectedUser?.id, // your current manager id from context
-                assignedTo: Number(data.assignedTo[0].userId), // array of user ids
+                assignedBy: Number(selectedUser?.id),
+                assignedTo: Number(data.assignedTo[0].userId),
                 startDate: formatDateWithTime(data.startDate, false),
                 endDate: formatDateWithTime(data.endDate, true),
-                status: "unseen", //default
+                status: "unseen",
                 priority: data.priority,
                 pdfLink: data.pdfLink,
                 githubLink: data.githubLink,
                 createdDate: getToday(),
-                // subtopics: data.miniTasks.map((t, idx) => ({
-                //     id: idx + 1,
-                //     title: t.task,
-                //     done: false
-                // }))
             };
 
             const saved = await taskService.create(payload);
             if (saved) {
                 console.log("Task created:", saved);
+                addToast("success", `Task ${data.title} Created`, 2000)
                 onClose();
                 reset();
                 fetchTasks();
-
             }
-            // const response = await axios.post("http://localhost:5500/tasks", payload, {
-            //     headers: { "Content-Type": "application/json" }
-            // });
         } catch (err) {
             console.error(err);
+            addToast("error", "Error Creating Task", 2000);
+        } finally {
+            if (loadingIdRef.current) {
+                removeToast(loadingIdRef.current);
+                loadingIdRef.current = 0;
+            }
         }
     };
-
 
     const [showDropDown, setShowDropDown] = useState(false);
 
     const isUserSelected = (id: number) => userFields.some((field) => field.userId === id);
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/50">
-            <div className="relative bg-white rounded-lg max-h-[80%] w-1/2 overflow-x-scroll shadow-lg p-6">
-                <h2 className="text-2xl font-sans font-bold mb-4 p-3">Add Task: </h2>
-                <div className="absolute top-0 right-0 pr-9 pt-7 text-xl cursor-pointer" onClick={onClose}>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 px-4">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl transition"
+                >
                     <AiOutlineClose />
-                </div>
+                </button>
 
-                <div className="flex w-[100%] h-[93%]">
-                    <div className="w-full">
-                        {/* Left side div of the form */}
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            <input {...register("title", { required: true })}
-                                placeholder="Title"
-                                className="border font-serif text-l font-bold text-center p-2 rounded w-full"
-                            />
-                            <TextareaAutosize {...register("desc")}
-                                placeholder="Description"
-                                className="border font-serif text-m p-2 rounded w-full"
-                                minRows={3}
-                            />
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Task</h2>
 
-                            <div className="relative max-w-full">
-                                <label className="block text-sm font-sans pl-2 pb-1">Assigned to:  </label>
-                                <div className="flex items-center justify-around min-h-18 px-2 border border-dashed ">
-                                    <p className="font-sans font-bold text-sm mr-2">
-                                        Users:
-                                    </p>
+                {/* Form */}
+                <form onSubmit={handleSubmit(onSubmit, () => addToast("error", "Needs All Fields", 2000))} className="space-y-5">
+                    {/* Title */}
+                    <input
+                        {...register("title", { required: true })}
+                        placeholder="Task Title"
+                        className="border border-gray-300 focus:ring-2 focus:ring-blue-400 font-medium text-lg p-3 rounded-lg w-full transition"
+                    />
 
-                                    <div className="flex space-x-1  max-w-[] overflow-scroll p-2 flex-1">
-                                        {userFields.map((field, index) => (
+                    {/* Description */}
+                    <TextareaAutosize
+                        {...register("desc")}
+                        placeholder="Description"
+                        className="border border-gray-300 focus:ring-2 focus:ring-blue-400 p-3 rounded-lg w-full text-sm"
+                        minRows={3}
+                    />
+
+
+                    {/* Assigned To */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2">Assigned To</label>
+                        <div className="flex flex-wrap items-center gap-3 border border-dashed border-gray-400 rounded-lg p-3">
+                            {userFields.map((field, index) => (
+                                <div key={field.id} className="relative group">
+                                    <ProfileCircle
+                                        name={field.name}
+                                        colorHex={users.find((u) => u.id === Number(field.userId))?.colorHex || "#F56565"}
+                                        size={40}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute -top-2 -right-2 bg-white text-gray-500 hover:text-red-500 rounded-full border shadow p-1"
+                                        onClick={() => removeUser(index)}
+                                    >
+                                        <AiOutlineDelete />
+                                    </button>
+                                    <span className="absolute hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1 -bottom-7 left-1/2 transform -translate-x-1/2">
+                                        {field.name}
+                                    </span>
+                                </div>
+                            ))}
+
+                            {/* Add user dropdown */}
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDropDown(!showDropDown)}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 text-xl transition"
+                                >
+                                    <AiFillPlusCircle />
+                                </button>
+
+                                {showDropDown && (
+                                    <div className="absolute top-12 left-0 w-48 bg-white border rounded-lg shadow-lg z-20">
+                                        {users.map((user) => (
                                             <div
-                                                key={field.id}
-                                                className="relative flex items-center gap-2 px-2 py-1 rounded-full">
-                                                <div className="group">
-                                                    <span className="absolute z-10 hidden group-hover:block bg-white whitespace-nowrap p-0.5 rounded shadow-lg top-[-10px]">{field.name} </span>
-                                                    <ProfileCircle name={field.name} colorHex={users.find(u => u.id === Number(field.userId))?.colorHex || "#F56565"} size={40} />
-                                                </div>
-
-                                                <button className="text-gray-500 z-0 p-0.5 bg-white rounded-full border absolute right-1 cursor-pointer hover:text-red-500 top-0" onClick={() => removeUser(index)}>
-                                                    <AiOutlineDelete />
-
-                                                </button>
+                                                key={user.id}
+                                                className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${isUserSelected(user.id) ? "opacity-50 cursor-not-allowed" : ""
+                                                    }`}
+                                                onClick={() => {
+                                                    if (!isUserSelected(user.id)) {
+                                                        addUser({ userId: user.id, name: user.name });
+                                                        setShowDropDown(false);
+                                                    }
+                                                }}
+                                            >
+                                                {user.name}
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="relative right-0 ">
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowDropDown(!showDropDown)}
-                                            className=" bg-blue-500 text-3xl text-white rounded-full flex items-center hover:bg-blue-300 cursor-pointer">
-                                            <AiFillPlusCircle />
-
-                                        </button>
-
-                                        {showDropDown && (
-                                            <div className="absolute right-0 z-10 mt-1 w-48 bg-white border rounded shadow">
-                                                {
-                                                    users.map((user) => (
-                                                        <div key={user.id} className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${isUserSelected(user.id) ? "opacity-50 cursor-not-allowed" : ""}`}
-                                                            onClick={() => {
-                                                                if (!isUserSelected(user.id)) {
-                                                                    addUser({ userId: user.id, name: user.name });
-
-                                                                    setShowDropDown(false);
-                                                                }
-                                                            }}>
-                                                            {user.name}
-
-                                                        </div>
-                                                    ))
-                                                }
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
+                                )}
                             </div>
-                            <div className="flex gap-2 items-center ">
-                                <div className="w-full">
-                                    <h2 className="font-mono text-sm pl-2 mb-1">Start date: </h2>
-                                    <input type="date" {...register("startDate", { required: true })} className="border p-2 rounded w-full" />
-
-                                </div>
-                                <div className="w-full">
-                                    <h2 className="font-mono text-sm pl-2 mb-1">End Date :</h2>
-                                    <input type="date" {...register("endDate", { required: true })} className="border p-2 rounded w-full" />
-                                </div>
-                            </div>
-                            <div>
-                                <p className="font-mono text-sm pl-2 mb-1: ">Priority :</p>
-                                <select {...register("priority")} className="border p-2 rounded w-full">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-
-
-                            {/* miniTasks */}
-                            {/* <div className="border border-dotted p-3">
-                                <h1 className="mb-2 font-mono text-sm">Mini Tasks: </h1>
-                                {miniTasksFields.map((field, index) => (
-                                    <div key={field.id} className="flex items-center gap-2 mb-2">
-                                        <p>·</p>
-                                        <input {...register(`miniTasks.${index}.task` as const, { required: true })}
-                                            placeholder={`Mini Task ${index + 1}`}
-                                            className="border p-2 rounded flex-1" />
-                                        <button type="button" onClick={() => removeMiniTask(index)} className="text-red-500 text-lg hover:text-red-300">
-                                            <AiOutlineDelete />
-                                        </button>
-                                    </div>
-                                ))}
-
-                                <button type="button" onClick={() => addMiniTask({ task: "" })}
-                                    className="text-blue-500"> + Add Mini Task
-                                </button>
-                            </div> */}
-                            <div className="flex border p-2 rounded w-full items-center space-x-2">
-                                <AiOutlineLink />
-                                <input {...register("pdfLink")}
-                                    placeholder="PDF Link"
-                                    className="border-0 focus:outline-none font-mono text-sm" />
-                            </div>
-                            <div className="flex border p-2 rounded w-full items-center space-x-2">
-                                <AiOutlineGithub />
-                                <input {...register("githubLink")}
-                                    placeholder="Github Link"
-                                    className="border-0  focus:outline-none font-mono text-sm" />
-                            </div>
-
-                            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded w-full">Submit</button>
-                        </form>
+                        </div>
                     </div>
 
-                </div>
+                    {/* Dates */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-sm font-semibold block mb-1">Start Date</label>
+                            <input
+                                type="date"
+                                {...register("startDate", { required: true })}
+                                className="border border-gray-300 focus:ring-2 focus:ring-blue-400 p-2 rounded-lg w-full"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm font-semibold block mb-1">End Date</label>
+                            <input
+                                type="date"
+                                {...register("endDate", { required: true })}
+                                className="border border-gray-300 focus:ring-2 focus:ring-blue-400 p-2 rounded-lg w-full"
+                            />
+                        </div>
+                    </div>
 
+                    {/* Priority */}
+                    <div>
+                        <label className="text-sm font-semibold block mb-1">Priority</label>
+                        <select
+                            {...register("priority")}
+                            className="border border-gray-300 focus:ring-2 focus:ring-blue-400 p-2 rounded-lg w-full"
+                        >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
 
+                    {/* Links */}
+                    <div className="flex items-center border border-gray-300 rounded-lg p-2 gap-2">
+                        <AiOutlineLink className="text-gray-500" />
+                        <input
+                            {...register("pdfLink")}
+                            placeholder="PDF Link"
+                            className="flex-1 border-0 focus:outline-none text-sm"
+                        />
+                    </div>
 
-            </div >
+                    <div className="flex items-center border border-gray-300 rounded-lg p-2 gap-2">
+                        <AiOutlineGithub className="text-gray-500" />
+                        <input
+                            {...register("githubLink")}
+                            placeholder="Github Link"
+                            className="flex-1 border-0 focus:outline-none text-sm"
+                        />
+                    </div>
 
-        </div >
-    )
-}
+                    {/* Submit */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow transition"
+                    >
+                        Submit Task
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
 
-export default AddTask
-
+export default AddTask;

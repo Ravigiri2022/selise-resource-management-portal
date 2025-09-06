@@ -60,15 +60,12 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                             : "#808080",
         }));
 
-
-        // Save original dates
         gantt.attachEvent("onBeforeTaskChanged", (id: number, mode: any, task: GanttTask) => {
             if (!task.$original_start) task.$original_start = new Date(task.start_date);
             if (!task.$original_end) task.$original_end = new Date(task.end_date);
             return true;
         });
 
-        // Show lightbox only if dates changed and not reschedule
         gantt.attachEvent("onAfterTaskDrag", (id: number) => {
             const task = gantt.getTask(id) as GanttTask;
             if (
@@ -79,7 +76,6 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             }
         });
 
-        // Custom confirmation popup after lightbox save
         gantt.attachEvent("onLightboxSave", (id: number, task: GanttTask) => {
             const t = task as GanttTask;
             if (
@@ -87,12 +83,10 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                 t.$original_end?.getTime() !== t.end_date.getTime()
             ) {
                 setPopupTask(t);
-                console.log("TTTTTT: ", t);
             }
             return true;
         });
 
-        // Restore dates if lightbox canceled
         gantt.attachEvent("onLightboxCancel", (id: number) => {
             const task = gantt.getTask(id) as GanttTask;
             if (task.$original_start && task.$original_end) {
@@ -119,7 +113,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                 label: "Assigned By",
                 align: "start",
                 template: (task: Task) => {
-                    const user = users.find((u) => u.id === task.assignedTo);
+                    const user = users.find((u) => Number(u.id) === Number(task.assignedTo));
                     return user ? user.name : "-";
                 },
             },
@@ -140,7 +134,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
     };
 
     return (
-        <div className=" w-full bg-white p-4 rounded-2xl shadow">
+        <div className="w-full bg-white p-4 rounded-2xl shadow">
             {/* Custom Confirm Popup */}
             {popupTask && (
                 <div className="fixed inset-0 flex items-center justify-center z-30 bg-black/30">
@@ -188,9 +182,8 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                 </div>
             )
             }
-
             {/* Toolbar */}
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 gap-2">
                 <h2 className="text-lg font-bold">📅 Project Timeline (Gantt Chart)</h2>
                 <div className="flex gap-2">
                     <button onClick={handleZoomIn} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -202,28 +195,39 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                 </div>
             </div>
 
-            <div ref={ganttContainer} style={{ width: "100%" }} />
+            {/* Scrollable Gantt container */}
+            <div className="overflow-x-auto">
+                <div
+                    ref={ganttContainer}
+                    style={{
+                        width: "1200px", // fixed min width so table doesn’t squish
+                        height: "70vh",
+                    }}
+                />
+            </div>
 
-            <div className="border-dotted h-[7vh] flex items-center p-5 justify-end" style={{ width: "100%" }}>
-                <div className="flex items-center text-center mr-3">
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center md:justify-end gap-3 border-t pt-3 mt-3">
+                <div className="flex items-center">
                     <div className="h-3 w-3 rounded-full bg-[#fbbf24] mr-1"></div>
-                    <span>Todo</span>
+                    <span className="text-sm">Todo</span>
                 </div>
-                <div className="flex items-center text-center mr-3">
+                <div className="flex items-center">
                     <div className="h-3 w-3 rounded-full bg-[#3b82f6] mr-1"></div>
-                    <span>In-Progress</span>
+                    <span className="text-sm">In-Progress</span>
                 </div>
-                <div className="flex items-center text-center mr-3">
+                <div className="flex items-center">
                     <div className="h-3 w-3 rounded-full bg-[#22c55e] mr-1"></div>
-                    <span>Done</span>
+                    <span className="text-sm">Done</span>
                 </div>
-                <div className="flex items-center text-center mr-3">
+                <div className="flex items-center">
                     <div className="h-3 w-3 rounded-full bg-[#808080] mr-1"></div>
-                    <span>Reschedule</span>
+                    <span className="text-sm">Reschedule</span>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
 export default GanttTable;
+

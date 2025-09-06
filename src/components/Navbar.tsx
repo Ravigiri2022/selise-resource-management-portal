@@ -1,35 +1,66 @@
 import { useState } from 'react';
-import { useUsers } from '../context/UserProvider'
+import { useUsers } from '../context/UserProvider';
 import AddTask from './AddTask';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { FiLogOut } from 'react-icons/fi';
 
 export const Navbar = () => {
     const { selectedUser, deselectUser } = useUsers();
     const [isOpened, setIsOpened] = useState<boolean>(false);
-    const closePopop = () => {
-        setIsOpened(false);
-    }
+    const closePopop = () => setIsOpened(false);
 
     return (
-        <div className='p-3  flex items-center justify-between border-b-1 select-none h-[10vh]'>
+        <div className='p-3 sm:px-6 flex items-center justify-between border-b select-none h-auto sm:h-[10vh]'>
 
-            {isOpened && (
-                <AddTask onClose={closePopop} />
-            )}
-            <div>
-                <p className="text-4xl pl-3" style={{ fontFamily: 'Rooster, sans-sarif' }}>Resource Management Portal</p>
-                <p className='font-mono text-sm pl-10 italic '>- <span className='text-emerald-800'>{selectedUser?.role} </span> portal</p>
+            {isOpened && <AddTask onClose={closePopop} />}
+
+            {/* Logo / Title */}
+            <div className=' items-center space-x-2 sm:space-x-4 flex-1 min-w-0'>
+                <p className="text-2xl sm:text-4xl truncate" style={{ fontFamily: 'Rooster, sans-serif' }}>
+                    Resource Management Portal
+                </p>
+                <p className='font-mono capitalize text-xs sm:text-sm italic truncate'>
+                    ~ <span className={`${selectedUser?.role === "manager" ? "text-red-800 font-semibold" : "text-indigo-800 font-semibold"}`}>{selectedUser?.role}</span> portal
+                </p>
             </div>
-            <div className='flex space-x-5'>
-                {selectedUser?.role == "manager" && (
-                    <div className='p-2 border rounded-lg shadow-lg  hover:bg-gray-100 cursor-pointer' onClick={() => setIsOpened(true)}>
-                        Add Task
-                    </div>
+
+            {/* Action Buttons */}
+            <div className='flex items-center space-x-2 sm:space-x-3 ml-2'>
+                {selectedUser?.role === "manager" && (
+                    <>
+                        {/* Mobile Icon */}
+                        <button
+                            className='p-2 border rounded-lg shadow-lg hover:bg-gray-100 sm:hidden'
+                            onClick={() => setIsOpened(true)}
+                        >
+                            <AiOutlinePlus size={20} />
+                        </button>
+                        {/* Desktop Text */}
+                        <button
+                            className='hidden sm:inline-flex p-2 sm:px-3 sm:py-2 border rounded-lg shadow-lg hover:bg-gray-100'
+                            onClick={() => setIsOpened(true)}
+                        >
+                            Add Task
+                        </button>
+                    </>
                 )}
-                <div onClick={deselectUser} className='p-2 border rounded-lg shadow-lg hover:bg-gray-100 cursor-pointer'>
+                {/* Logout / Change User */}
+                {/* Mobile Icon */}
+                <button
+                    onClick={deselectUser}
+                    className='p-2 border rounded-lg shadow-lg hover:bg-gray-100 sm:hidden'
+                >
+                    <FiLogOut size={20} />
+                </button>
+                {/* Desktop Text */}
+                <button
+                    onClick={deselectUser}
+                    className='hidden sm:inline-flex p-2 sm:px-3 sm:py-2 border rounded-lg shadow-lg hover:bg-gray-100'
+                >
                     Logout / Change User
-                </div>
-
+                </button>
             </div>
+
         </div>
     )
 }

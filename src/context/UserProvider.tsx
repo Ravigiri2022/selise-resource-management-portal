@@ -1,6 +1,9 @@
 // UserContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { User } from "../types";
+type toast = {
+    id: number, type: string, message: string
+}
 
 type UserContextType = {
     users: User[];            // all users fetched from backend
@@ -8,12 +11,17 @@ type UserContextType = {
     selectUser: (user: User) => void; // set selected user
     deselectUser: () => void;          // clear selected user
     loading: boolean;
+    toasts: toast[];
+    addToast: (type: string, message: string, duration: number) => number;
+    removeToast: (id: number) => void;
+
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [users, setUsers] = useState<User[]>([]);
+    const [toasts, setToasts] = useState<toast[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(() => {
         const saved = localStorage.getItem("selectedUser");
         return saved ? JSON.parse(saved) : null;
@@ -42,9 +50,25 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("selectedUser");
     };
 
+    const addToast = (type: string, message: string, duration = 2000) => {
+        const id = Date.now();
+        setToasts((prev) => [...prev, { id, type, message }]);
+        if (duration > 0) {
+            setTimeout(() => {
+                setToasts((prev) => prev.filter((t) => t.id !== id));
+
+            }, duration)
+        }
+        return id;
+    }
+
+    const removeToast = (id: number) => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+    }
+
     return (
         <UserContext.Provider
-            value={{ users, selectedUser, selectUser, deselectUser, loading }}
+            value={{ users, selectedUser, selectUser, deselectUser, loading, toasts, addToast, removeToast }}
         >
             {children}
         </UserContext.Provider>

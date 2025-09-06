@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TaskTable from "../components/TaskTable";
 import { useTasks } from "../context/TaskContext";
 import TaskDetails from "../components/TaskDetails";
@@ -11,30 +11,30 @@ const tabs = ["Tasks", "Employees"];
 
 const EmployeeDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
-    const [selectedTask, setSelectedTask] = useState<Task>();
+    const [selectedTask, setSelectedTask] = useState<Task | null>();
     const { selectedUser } = useUsers();
     const { getTasksByEmployee } = useTasks();
     const tasks = getTasksByEmployee(selectedUser ? selectedUser?.id : 0);
-    useEffect(() => {
-        console.log(tasks)
-    }, [])
+
 
     return (
-        <div className="w-full flex">
-            <div className="w-1/6 flex flex-col shadow-lg h-[90vh] p-1">
+        <div className="w-full flex flex-col md:flex-row h-[90vh]">
+            <div className="flex md:flex-col overflow-x-auto md:overflow-x-visible shadow-lg bg-white md:w-1/6 w-full">
                 {
                     tabs.map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 -mb-px  rounded border-r-2 ${activeTab === tab ? "font-bold " : "border-transparent text-gray-500 hover:text-gray-400 "
+                            className={`flex-1 md:flex-none px-2 sm:px-4 py-2 text-sm sm:text-base md:text-base border-b md:border-b-0 md:border-r-2 ${activeTab === tab
+                                ? "font-bold border-blue-500"
+                                : "border-transparent text-gray-500 hover:text-gray-700"
                                 }`}>
                             {tab}
                         </button>
                     ))
                 }
             </div>
-            <div className="w-full">
+            <div className="flex-1 p-2 sm:p-4 overflow-auto">
                 {/* Tab Contents */}
                 {activeTab === "Tasks" && (
                     <div>

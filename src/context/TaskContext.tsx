@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { Task, resLog } from "../types";
 import axios from "axios";
+import { API_URL } from "../../config.js"
 
 type TaskContextType = {
     tasks: Task[];
@@ -27,16 +28,15 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     const [resLogs, setResLogs] = useState<resLog[]>([]);
     const fetchTasks = async () => {
         try {
-            const { data } = await axios.get<Task[]>("http://localhost:5500/tasks");
+            const { data } = await axios.get<Task[]>(`${API_URL}/tasks`);
             setTasks(data);
-            console.log(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
     };
     const fetchResLogs = async () => {
         try {
-            const { data } = await axios.get<resLog[]>("http://localhost:5500/rescheduleLogs");
+            const { data } = await axios.get<resLog[]>(`${API_URL}/rescheduleLogs`);
             setResLogs(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);

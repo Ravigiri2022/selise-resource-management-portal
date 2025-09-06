@@ -1,31 +1,55 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "name": "John Doe",
       "role": "employee",
-      "availability": [5, 5, 5, 5, 5, 5, 0],
+      "availability": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        0
+      ],
       "jobTitle": "Software Engineer",
       "colorHex": "#F56565"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Mary Smith",
       "role": "employee",
-      "availability": [5, 5, 5, 5, 5, 5, 0],
+      "availability": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        0
+      ],
       "jobTitle": "UI Designer",
       "colorHex": "#F56565"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Alex Johnson",
       "role": "employee",
-      "availability": [5, 5, 5, 5, 5, 5, 0],
+      "availability": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        0
+      ],
       "jobTitle": "Frontend Developer",
       "colorHex": "#F56565"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Sarah Lee",
       "role": "manager",
       "jobTitle": "Project Manager",
@@ -34,12 +58,12 @@
   ],
   "tasks": [
     {
-      "id": 101,
+      "id": "101",
       "title": "Backend API Development",
       "description": "Develop authentication and user API endpoints",
       "assignedBy": 4,
       "assignedTo": 1,
-      "status": "unseen",
+      "status": "todo",
       "priority": "high",
       "startDate": "2025-09-02 00:00",
       "endDate": "2025-09-04 24:00",
@@ -49,7 +73,7 @@
       "projectId": 201
     },
     {
-      "id": 102,
+      "id": "102",
       "title": "UI Design Mockups",
       "description": "Create mobile and web mockups for the dashboard",
       "assignedBy": 4,
@@ -64,7 +88,7 @@
       "projectId": 201
     },
     {
-      "id": 103,
+      "id": "103",
       "title": "Database Schema Setup",
       "description": "Design initial schema for users and tasks",
       "assignedBy": 4,
@@ -79,7 +103,7 @@
       "projectId": 201
     },
     {
-      "id": 104,
+      "id": "104",
       "title": "API Testing",
       "description": "Write unit tests for backend API",
       "assignedBy": 4,
@@ -94,7 +118,7 @@
       "projectId": 201
     },
     {
-      "id": 105,
+      "id": "105",
       "title": "Client Presentation",
       "description": "Prepare slides for client meeting",
       "assignedBy": 4,
@@ -109,37 +133,148 @@
       "projectId": 202
     },
     {
-      "id": 5940,
+      "id": "5940",
       "title": "text 1",
       "description": "test",
       "assignedBy": 4,
       "assignedTo": 1,
       "startDate": "2025-09-05 00:00",
       "endDate": "2025-09-30 23:59",
-      "status": "unseen",
+      "status": "todo",
       "priority": "low",
       "pdfLink": "www.pdf.com",
       "githubLink": "www.github.com",
       "createdDate": "2025-09-05"
+    },
+    {
+      "id": "4779",
+      "title": "pop",
+      "description": "",
+      "assignedBy": "4",
+      "assignedTo": 1,
+      "startDate": "2025-09-10 00:00",
+      "endDate": "2025-09-24 23:59",
+      "status": "todo",
+      "priority": "high",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "pop",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "8128",
+      "title": "test1",
+      "description": "test1",
+      "assignedBy": "4",
+      "assignedTo": 3,
+      "startDate": "2025-09-06 00:00",
+      "endDate": "2025-09-12 23:59",
+      "status": "unseen",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "1093",
+      "title": "test2 ",
+      "description": "test2",
+      "assignedBy": 4,
+      "assignedTo": 3,
+      "startDate": "2025-09-06 00:00",
+      "endDate": "2025-09-18 23:59",
+      "status": "unseen",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "4620",
+      "title": "test3",
+      "description": "test3",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "startDate": "2025-09-06 00:00",
+      "endDate": "2025-09-19 23:59",
+      "status": "todo",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "6518",
+      "title": "pop",
+      "description": "pop",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "startDate": "2025-09-06 00:00",
+      "endDate": "2025-09-06 23:59",
+      "status": "todo",
+      "priority": "medium",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "4846",
+      "title": "sdk",
+      "description": "dskmd",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "startDate": "2025-09-05 00:00",
+      "endDate": "2025-10-01 23:59",
+      "status": "todo",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
+    },
+    {
+      "id": "9002",
+      "title": "pop",
+      "description": "pop",
+      "assignedBy": 4,
+      "assignedTo": 1,
+      "startDate": "2025-09-06 00:00",
+      "endDate": "2025-09-06 23:59",
+      "status": "todo",
+      "priority": "low",
+      "pdfLink": "www.pdf.com",
+      "githubLink": "www.github.com",
+      "createdDate": "2025-09-06"
     }
   ],
   "projects": [
     {
-      "id": 201,
+      "id": "201",
       "name": "Website Revamp",
-      "members": [1, 2, 3],
-      "tasks": [101, 102, 103, 104]
+      "members": [
+        1,
+        2,
+        3
+      ],
+      "tasks": [
+        101,
+        102,
+        103,
+        104
+      ]
     },
     {
-      "id": 202,
+      "id": "202",
       "name": "Client Portal",
-      "members": [2],
-      "tasks": [105]
+      "members": [
+        2
+      ],
+      "tasks": [
+        105
+      ]
     }
   ],
   "rescheduleLogs": [
     {
-      "id": 1,
+      "id": "1",
       "taskId": 104,
       "requestedBy": "employee",
       "requestedById": 4,
@@ -155,7 +290,7 @@
       "actionDate": null
     },
     {
-      "id": 2,
+      "id": "2",
       "taskId": 105,
       "requestedBy": "employee",
       "requestedById": 2,
@@ -172,7 +307,7 @@
       "actionMesg": "I am not comfortable with this date adhasjhiahsidhas sbdhabisdb sudhbausd hsbdausd "
     },
     {
-      "id": 3,
+      "id": "3",
       "taskId": 105,
       "requestedBy": "manager",
       "requestedById": 4,

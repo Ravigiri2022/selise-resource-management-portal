@@ -22,7 +22,7 @@ export const taskService = {
   },
 
   updateStatus: async (id: number, status: string) => {
-    const res = await api.patch(`/tasks?id=${id}`, { status });
+    const res = await api.patch(`/tasks/${id}`, { status });
     return res.data;
   },
   delete: async (id: number) => {

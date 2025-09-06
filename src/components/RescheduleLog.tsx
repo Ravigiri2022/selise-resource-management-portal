@@ -1,146 +1,272 @@
-import { AiOutlineArrowRight, AiOutlineClose } from "react-icons/ai"
-import type { resLog } from "../types"
-import { useUsers } from "../context/UserProvider"
+import { AiOutlineArrowRight, AiOutlineClose } from "react-icons/ai";
+import type { resLog } from "../types";
+import { useUsers } from "../context/UserProvider";
 import { useState } from "react";
+
 const RescheduleLog: React.FC<{ resLogs: resLog[] }> = ({ resLogs }) => {
-    const { users, selectedUser } = useUsers();
+    const { users, selectedUser, addToast } = useUsers();
     const [logAction, setLogAction] = useState("");
     const [log, setLog] = useState<resLog | null>();
 
     return (
-        <div className="bg-white h-fit m-2 rounded-lg p-2 border border-gray-400/50 shadow-lg">
+        <div className="bg-white h-fit m-2 rounded-xl p-4 border border-gray-300 shadow-md">
+            {/* Modal */}
             {logAction && (
-                <div className="fixed flex items-center justify-center inset-0 bg-black/50 z-10">
-                    <div className="bg-white w-[60vh] h-[50vh]">
-                        <div className={`w-full flex p-3  items-center justify-between ${logAction === "accepted" ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700"}`}><p className="capitalize">{logAction}</p><span onClick={() => { setLogAction(""); setLog(null); }}><AiOutlineClose /></span></div>
-                        {logAction === "accepted" ? (
-                            <div className="p-5">
-                                <p className="text-center space-y-2 font-semibold">Changes Made: </p>
-                                <p className="text-center ">New Changes are recorded and saved</p>
-                                <div className="flex">
-                                    <div>
-                                        <p className="font-semibold">Old Start Date: </p>
-                                        <p className="font-semibold">Old End Date: </p>
-                                        <p className="font-semibold">New Start Date: </p>
-                                        <p className="font-semibold">New End Date:</p>
-                                    </div>
-                                    <div>
-                                        <p>{log?.oldStartDate} </p>
-                                        <p>{log?.oldEndDate}</p>
-                                        <p>{log?.newStartDate}</p>
-                                        <p>{log?.newEndDate}</p>
-                                    </div>
-                                </div>
-                                <p className="font-semibold">Changes Made By <span className="italic font-normal">{users.find((t) => t.id === selectedUser?.id)?.name}</span></p>
-                                <p className="font-semibold">Message:</p>
-                                <textarea rows="5" className="border w-full"></textarea>
+                <div className="fixed inset-0 bg-black/50 z-20 flex items-center justify-center">
+                    <div className="bg-white w-[90%] max-w-lg rounded-xl shadow-lg overflow-hidden">
+                        {/* Modal Header */}
+                        <div
+                            className={`flex items-center justify-between p-3 ${logAction === "accepted"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                                }`}
+                        >
+                            <p className="capitalize font-semibold">{logAction}</p>
+                            <button
+                                onClick={() => {
+                                    setLogAction("");
+                                    setLog(null);
+                                }}
+                                className="hover:text-black"
+                            >
+                                <AiOutlineClose />
+                            </button>
+                        </div>
 
-                                <div className="w-full flex justify-end gap-1">
-                                    <div className="bg-gray-400 px-2 text-white cursor-default" onClick={() => { setLogAction(""); setLog(null); }}>
-                                        Cancel
-                                    </div>
-                                    <div className="bg-green-600 px-2 text-white cursor-default">
-                                        Confirm
-                                    </div>
-                                </div>
+                        {/* Modal Content */}
+                        <div className="p-5 space-y-4">
+                            {logAction === "accepted" ? (
+                                <>
+                                    <p className="text-center font-semibold">Changes Made:</p>
+                                    <p className="text-center text-gray-600">
+                                        New changes are recorded and saved.
+                                    </p>
 
+                                    <div className="grid grid-cols-2 gap-x-4 text-sm">
+                                        <div className="space-y-1 font-semibold">
+                                            <p>Old Start Date:</p>
+                                            <p>Old End Date:</p>
+                                            <p>New Start Date:</p>
+                                            <p>New End Date:</p>
+                                        </div>
+                                        <div className="space-y-1 text-gray-700">
+                                            <p>{log?.oldStartDate}</p>
+                                            <p>{log?.oldEndDate}</p>
+                                            <p>{log?.newStartDate}</p>
+                                            <p>{log?.newEndDate}</p>
+                                        </div>
+                                    </div>
 
-                            </div>
-                        ) : (
-                            <div className="p-5">
-                                <p className="text-center space-y-2 font-semibold">Changes Not To Be Made: </p>
-                                <p className="text-center ">Changes won't be made and the old dates will remain as it is.</p>
-                                <div className="flex">
-                                    <div>
-                                        <p className="font-semibold">Start Date: </p>
-                                        <p className="font-semibold">End Date:</p>
-                                    </div>
-                                    <div>
-                                        <p>{log?.oldStartDate} </p>
-                                        <p>{log?.oldEndDate}</p>
+                                    <p className="font-semibold">
+                                        Changes Made By:{" "}
+                                        <span className="italic font-normal">
+                                            {users.find((t) => t.id === selectedUser?.id)?.name}
+                                        </span>
+                                    </p>
 
-                                    </div>
-                                </div>
-                                <p className="font-semibold">Action By: <span className="italic font-normal">{users.find((t) => t.id === selectedUser?.id)?.name}</span></p>
-                                <p className="font-semibold">Message:</p>
-                                <textarea rows="5" className="border w-full"></textarea>
+                                    <label className="font-semibold">Message:</label>
+                                    <textarea
+                                        rows={4}
+                                        className="border w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                    ></textarea>
 
-                                <div className="w-full flex justify-end gap-1">
-                                    <div className="bg-gray-400 px-2 text-white cursor-default" onClick={() => { setLogAction(""); setLog(null); }}>
-                                        Cancel
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setLogAction("");
+                                                setLog(null);
+                                            }}
+                                            className="bg-gray-400 text-white px-4 py-1.5 rounded-lg hover:bg-gray-500"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button className="bg-green-600 text-white px-4 py-1.5 rounded-lg hover:bg-green-500"
+                                            onClick={() => addToast("error", "Operation success", 2000)}>
+
+                                            Confirm
+                                        </button>
                                     </div>
-                                    <div className="bg-green-600 px-2 text-white cursor-default">
-                                        Confirm
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-center font-semibold">
+                                        Changes Not To Be Made:
+                                    </p>
+                                    <p className="text-center text-gray-600">
+                                        Changes won't be made and the old dates will remain.
+                                    </p>
+
+                                    <div className="grid grid-cols-2 gap-x-4 text-sm">
+                                        <div className="font-semibold">
+                                            <p>Start Date:</p>
+                                            <p>End Date:</p>
+                                        </div>
+                                        <div>
+                                            <p>{log?.oldStartDate}</p>
+                                            <p>{log?.oldEndDate}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        )}
+
+                                    <p className="font-semibold">
+                                        Action By:{" "}
+                                        <span className="italic font-normal">
+                                            {users.find((t) => t.id === selectedUser?.id)?.name}
+                                        </span>
+                                    </p>
+
+                                    <label className="font-semibold">Message:</label>
+                                    <textarea
+                                        rows={4}
+                                        className="border w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-300"
+                                    ></textarea>
+
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setLogAction("");
+                                                setLog(null);
+                                            }}
+                                            className="bg-gray-400 text-white px-4 py-1.5 rounded-lg hover:bg-gray-500"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button className="bg-red-600 text-white px-4 py-1.5 rounded-lg hover:bg-red-500">
+                                            Confirm
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
-            <h2 className="font-semibold text-lg">Reschedule Logs</h2>
-            <div className="p-4 bg-white rounded-xl space-y-4">
-                {/* <!-- Single Reschedule Log --> */}
 
+            {/* Logs */}
+            <h2 className="font-semibold text-xl mb-4">Reschedule Logs</h2>
+
+            <div className="space-y-4">
                 {resLogs.map((log) => (
-                    <div className="border border-dashed rounded-lg">
-                        <div className="flex items-center justify-center p-2">
-                            <p className={`capitalize rounded-full w-fit text-center px-2  ${log.status === "rejected" ?
-                                "bg-red-200 text-red-700" : log.status === "accepted" ? "bg-green-200 text-green-700" : "bg-amber-200 text-amber-700"}`}>{log.status}</p>
+                    <div
+                        key={log.id}
+                        className="border rounded-lg shadow-sm overflow-hidden"
+                    >
+                        {/* Status */}
+                        <div
+                            className={`text-center px-3 py-1 font-medium ${log.status === "rejected"
+                                ? "bg-red-100 text-red-700"
+                                : log.status === "accepted"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-amber-100 text-amber-700"
+                                }`}
+                        >
+                            {log.status}
                         </div>
 
-                        <div className="relative  flex items-start justify-around rounded-lg p-2 ">
-                            <div className="flex-1">
-                                <p><span className="font-semibold" >Date: </span> <span>{log.createdAt}</span></p>
-                                <p><span className="font-semibold">Initiated By:</span> <span>{users.find((user) => user?.id === log?.requestedById)?.name}</span></p>
-                                <p><span className="font-semibold">Message:</span> <span>{log.reason}</span></p>
+                        {/* Content */}
+                        <div className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            {/* Request Info */}
+                            <div className="flex-1 space-y-1 text-sm">
+                                <p>
+                                    <span className="font-semibold">Date:</span>{" "}
+                                    {log.createdAt}
+                                </p>
+                                <p>
+                                    <span className="font-semibold">Initiated By:</span>{" "}
+                                    {users.find((u) => u?.id === log?.requestedById)?.name}
+                                </p>
+                                <p>
+                                    <span className="font-semibold">Message:</span> {log.reason}
+                                </p>
                             </div>
-                            <div className="mr-2 absolute right-8/12 top-1/3">
-                                <AiOutlineArrowRight />
-                            </div>
-                            <div className="flex-1 flex flex-col items-start justify-center">
 
-                                <p className="font-semibold">Changes </p>
-                                <p><span className="font-semibold">Old Date</span> <span>{log.oldStartDate} - {log.oldEndDate}</span></p>
-                                <p><span className="font-semibold">New Date </span><span>{log.newStartDate} - {log.newEndDate}</span></p>
+                            {/* Arrow */}
+                            <div className="hidden md:flex items-center justify-center">
+                                <AiOutlineArrowRight className="text-gray-400 text-xl" />
+                            </div>
 
+                            {/* Change Dates */}
+                            <div className="flex-1 space-y-1 text-sm">
+                                <p className="font-semibold">Changes</p>
+                                <p>
+                                    <span className="font-semibold">Old:</span>{" "}
+                                    {log.oldStartDate} – {log.oldEndDate}
+                                </p>
+                                <p>
+                                    <span className="font-semibold">New:</span>{" "}
+                                    {log.newStartDate} – {log.newEndDate}
+                                </p>
                             </div>
-                            <div className="mr-2 absolute left-[93vh] top-1/3">
-                                <AiOutlineArrowRight />
+
+                            {/* Arrow */}
+                            <div className="hidden md:flex items-center justify-center">
+                                <AiOutlineArrowRight className="text-gray-400 text-xl" />
                             </div>
-                            <div className="flex-1 items-start">
-                                <p><span className="font-semibold">Date: </span><span>{log.actionDate ? log.actionDate : "xxxx-xx-xx"}</span></p>
+
+                            {/* Action Info */}
+                            <div className="flex-1 space-y-1 text-sm">
+                                <p>
+                                    <span className="font-semibold">Date:</span>{" "}
+                                    {log.actionDate || "xxxx-xx-xx"}
+                                </p>
+
                                 {log.requestedById !== selectedUser?.id ? (
-                                    <div className="flex space-x-3">
-                                        <p className="font-semibold">Action: </p>
-                                        <div className="border rounded bg-green-600 cursor-pointer hover:bg-green-500 text-white px-2" onClick={() => { setLogAction("accepted"); setLog(log); }}>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold">Action:</span>
+                                        <button
+                                            onClick={() => {
+                                                setLogAction("accepted");
+                                                setLog(log);
+                                            }}
+                                            className="bg-green-600 text-white px-3 py-0.5 rounded-lg text-sm hover:bg-green-500"
+                                        >
                                             Accept
-                                        </div>
-                                        <div className="border rounded cursor-pointer hover:bg-red-500 bg-red-600 text-white px-2" onClick={() => { setLogAction("rejected"); setLog(log) }}>
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setLogAction("rejected");
+                                                setLog(log);
+                                            }}
+                                            className="bg-red-600 text-white px-3 py-0.5 rounded-lg text-sm hover:bg-red-500"
+                                        >
                                             Decline
-                                        </div>
+                                        </button>
                                     </div>
                                 ) : (
-                                    <p><span className="font-semibold">Action By:</span> <span>{log.actionBy ? users.find((user) => user?.id === log?.actionBy)?.name : "-------"}</span></p>
+                                    <p>
+                                        <span className="font-semibold">Action By:</span>{" "}
+                                        {log.actionBy
+                                            ? users.find((u) => u?.id === log?.actionBy)?.name
+                                            : "-------"}
+                                    </p>
                                 )}
 
-                                <p><span className="font-semibold">Message:</span> <span>{log.actionMesg ? log.actionMesg : "-------"}</span></p>
+                                <p>
+                                    <span className="font-semibold">Message:</span>{" "}
+                                    {log.actionMesg || "-------"}
+                                </p>
                             </div>
                         </div>
-                        <div className={`rounded-b-lg text-center ${log.status === "rejected" ?
-                            "bg-red-200 text-red-700" : log.status === "accepted" ? "bg-green-200 text-green-700" : "bg-amber-200 text-amber-700"}`}>
-                            <p>{log.status === "accepted" ? "The New Changes Are Updated and Kept" : log.status === "pending" ? "Waiting for the Action" : "Was Rejected and The Old Changes Were Kept"}</p>
+
+                        {/* Footer Status */}
+                        <div
+                            className={`text-center px-3 py-2 text-sm font-medium ${log.status === "rejected"
+                                ? "bg-red-50 text-red-600"
+                                : log.status === "accepted"
+                                    ? "bg-green-50 text-green-600"
+                                    : "bg-amber-50 text-amber-600"
+                                }`}
+                        >
+                            {log.status === "accepted"
+                                ? "The new changes are updated and kept"
+                                : log.status === "pending"
+                                    ? "Waiting for action"
+                                    : "Was rejected and the old dates were kept"}
                         </div>
                     </div>
-
-
                 ))}
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default RescheduleLog
-
-
-
+export default RescheduleLog;
