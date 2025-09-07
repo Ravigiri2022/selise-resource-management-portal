@@ -28,7 +28,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     });
     const [loading, setLoading] = useState(true);
 
-    const API_URL = "http://localhost:5500/users";
+    const API_URL = "http://localhost:5500/users";  //<-------------url
 
     // Fetch all users once
     useEffect(() => {

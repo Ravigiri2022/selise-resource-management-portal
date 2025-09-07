@@ -75,6 +75,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                                 onClick={() => {
                                     setLogAction("");
                                     setLog(null);
+                                    setMessage("");
                                 }}
                                 className="hover:text-black"
                             >
@@ -169,6 +170,8 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                                     <label className="font-semibold">Message:</label>
                                     <textarea
                                         rows={4}
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
                                         className="border w-full rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-300"
                                     ></textarea>
 

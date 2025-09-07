@@ -16,6 +16,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
     }
 
     const [popupTask, setPopupTask] = useState<GanttTask | null>(null);
+    const [msg, setMsg] = useState("");
     const { users } = useUsers();
     const ganttContainer = useRef<HTMLDivElement>(null);
     const [zoomLevel, setZoomLevel] = useState<"Day" | "Week" | "Month">("Week");
@@ -52,12 +53,14 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             status: task.status,
             color:
                 task.status === "done"
-                    ? "#22c55e"
+                    ? "#28A745"
                     : task.status === "todo"
-                        ? "#fbbf24"
+                        ? "#007BFF"
                         : task.status === "in-progress"
-                            ? "#3b82f6"
-                            : "#808080",
+                            ? "#FFD700"
+                            : task.status === "reschedule"
+                                ? "#6F42C1"
+                                : "#6C757D"
         }));
 
         gantt.attachEvent("onBeforeTaskChanged", (id: number, mode: any, task: GanttTask) => {
@@ -155,7 +158,11 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                             New Dates: <span className="text-sm font-mono text-blue-400">{popupTask.start_date.toLocaleString()}</span> - <span className="text-sm font-mono text-blue-400">{popupTask.end_date.toLocaleString()}</span>
                         </p>
 
-                        <textarea placeholder="Message goes here" className="w-full border mt-2 mb-2 p-1" />
+                        <textarea placeholder="Message goes here"
+                            value={msg}
+                            onChange={(e) => setMsg(e.target.value)}
+                            className="w-full border mt-2 mb-2 p-1"
+                        />
 
                         <div className="flex gap-2 justify-end">
                             <button onClick={popupTask.status === "reschedule" ? () => console.log("Confirm clicked and not sent") : () => console.log("Confirm clicked action")} className={`px-3 py-1 bg-green-500 text-white rounded ${popupTask.status === "reschedule" && "cursor-not-allowed"}`}>
@@ -209,20 +216,24 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             {/* Legend */}
             <div className="flex flex-wrap justify-center md:justify-end gap-3 border-t pt-3 mt-3">
                 <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-[#fbbf24] mr-1"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#007BFF] mr-1"></div>
                     <span className="text-sm">Todo</span>
                 </div>
                 <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-[#3b82f6] mr-1"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#FFD700] mr-1"></div>
                     <span className="text-sm">In-Progress</span>
                 </div>
                 <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-[#22c55e] mr-1"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#28A745] mr-1"></div>
                     <span className="text-sm">Done</span>
                 </div>
                 <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-[#808080] mr-1"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#6F42C1] mr-1"></div>
                     <span className="text-sm">Reschedule</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="h-3 w-3 rounded-full bg-[#6C757D] mr-1"></div>
+                    <span className="text-sm">Unseen</span>
                 </div>
             </div>
         </div>
