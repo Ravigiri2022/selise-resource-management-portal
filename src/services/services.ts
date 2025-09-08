@@ -2,29 +2,25 @@ import api from "./api";
 
 export const taskService = {
   getAll: async () => {
-    const res = await api.get("/tasks");
+    const res = await api.get("api/v1/tasks");
+    return res.data;
+  },
+  getResLogsById: async (id: unknown) => {
+    const res = await api.get(`api/v1/tasks/${id}/logs`);
     return res.data;
   },
 
-  //   getById: async (id: string | number) => {
-  //     const res = await api.get(`/tasks/${id}`);
-  //     return res.data;
-  //   },
-
-  create: async (task: any) => {
+  create: async (task: unknown) => {
     const res = await api.post("/tasks", task);
     return res.data;
   },
 
-  //   update: async (id: number, task: any) => {
-  //     const res = await api.put(`/tasks/?id=${id}`, task);
-  //     return res.data;
-  //   },
-
-  //   updateStatus: async (id: number, status: string) => {
-  //     const res = await api.patch(`/tasks/${id}`, { status });
-  //     return res.data;
-  //   },
+  updateStatus: async (id: number, status: string) => {
+    const res = await api.patch(`api/v1/tasks/${id}`, {
+      task: { status: status },
+    });
+    return res.data;
+  },
   //   delete: async (id: number) => {
   //     await api.delete(`/tasks/${id}`);
   //   },
@@ -36,28 +32,10 @@ export const logService = {
     return res.data;
   },
 
-  //   getById: async (id: string | number) => {
-  //     const res = await api.get(`/rescheduleLogs/${id}`);
-  //     return res.data;
-  //   },
-
-  //   create: async (task: any) => {
-  //     const res = await api.post("/rescheduleLogs", task);
-  //     return res.data;
-  //   },
-
-  update: async (id: number, task: any) => {
+  update: async (id: number, task: unknown) => {
     const res = await api.put(`/rescheduleLogs/?id=${id}`, task);
     return res.data;
   },
-
-  //   updateStatus: async (id: number, status: string) => {
-  //     const res = await api.patch(`/rescheduleLogs/${id}`, { status });
-  //     return res.data;
-  //   },
-  //   delete: async (id: number) => {
-  //     await api.delete(`/rescheduleLogs/${id}`);
-  //   },
 };
 
 // User Service
@@ -67,26 +45,8 @@ export const userService = {
     return res.data;
   },
 
-  // getById: async (id: string | number) => {
-  //   const res = await api.get(`/tasks/${id}`);
-  //   return res.data;
-  // },
-
-  // create: async (task: any) => {
-  //   const res = await api.post("/tasks", task);
-  //   return res.data;
-  // },
-
-  // update: async (id: number, task: any) => {
-  //   const res = await api.put(`/tasks/?id=${id}`, task);
-  //   return res.data;
-  // },
-
-  // updateStatus: async (id: number, status: string) => {
-  //   const res = await api.patch(`/tasks/${id}`, { status });
-  //   return res.data;
-  // },
-  // delete: async (id: number) => {
-  //   await api.delete(`/tasks/${id}`);
-  // },
+  getTaskById: async (id: unknown) => {
+    const res = await api.get(`/api/v1/users/${id}/tasks`);
+    return res.data;
+  },
 };

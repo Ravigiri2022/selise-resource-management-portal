@@ -11,16 +11,40 @@ import { useRef } from "react";
 
 
 const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void }> = ({ data, setTask }) => {
-    const { getResLogsByTaskId, fetchTasks } = useTasks();
-    const resLogs = getResLogsByTaskId(Number(data.id));
+    const { fetchTasks, fetchResLogs, resLogs } = useTasks();
     const { users, selectedUser, addToast } = useUsers();
-
     const assByUser = users?.find((user) => Number(user.id) === Number(data.assignedBy));
     const assToUser = users?.find((user) => Number(user.id) === Number(data.assignedTo));
     const toastShown = useRef(false);
+    const handleStatusChange = async () => {
+        if (data.status === "todo") {
+            try {
+                const res = await taskService.updateStatus(data.id, "in-progress");
+                setTask(res);
+                fetchTasks();
+                addToast("success", "Marked as in-progress", 2000)
 
+            } catch (err) {
+                console.error("Failed to update task status:", err);
+
+            }
+        }
+        else if (data.status === "in-progress") {
+            try {
+                const res = await taskService.updateStatus(data.id, "done");
+                setTask(res);
+                fetchTasks();
+                addToast("success", "Marked as in-progress", 2000)
+
+            } catch (err) {
+                console.error("Failed to update task status:", err);
+
+            }
+        }
+    }
 
     useEffect(() => {
+        fetchResLogs(Number(data.id));
         const updateStatusIfUnseen = async () => {
             if (!data || !selectedUser) return;
             if (data.status === "unseen" && selectedUser.role !== "manager" && !toastShown.current) {
@@ -119,18 +143,16 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                         <span>:</span>
                         {selectedUser?.role === "employee" && data.status !== "reschedule" && data.status !== "done" ? (
                             <div>
-                                <div className="bg-gray-300 font-semibold gap-2 px-2 w-fit text-xs py-1 flex flex-col rounded-lg cursor-pointer sm:text-base sm:flex-row md:text-sm hover:shadow-sm">
-                                    <span>Mark as:</span> <span>In-Progress</span>
+                                <div className={`bg-gray-300 font-semibold gap-2 px-2 w-fit text-xs py-1 flex flex-col rounded-lg border cursor-pointer sm:text-base sm:flex-row md:text-sm hover:shadow-sm ${data.status === "todo" ? "bg-yellow-100 text-yellow-700" : data.status === "in-progress" ? "bg-green-200 text-green-700" : "border"}`}
+                                    onClick={() => handleStatusChange()}>
+                                    <span>Mark as:</span> <span>{data.status === "todo" ? "In-Progress" : "Done"}</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-sm font-semibold text-gray-400">
-                                Waiting for the reschedule action
+                            <div className="text-sm font-semibold text-gray-400 ">
+                                {data.status === "reschedule" ? "Waiting for the reschedule action" : "Marked as Done"}
                             </div>
                         )}
-
-
-
                     </div>
                 </div>
 

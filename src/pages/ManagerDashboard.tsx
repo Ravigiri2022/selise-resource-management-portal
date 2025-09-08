@@ -11,8 +11,7 @@ const tabs = ["Tasks", "Calendar", "Employees"];
 const ManagerDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
     const [selectedTask, setSelectedTask] = useState<Task | null>();
-    const { getTasksByManager } = useTasks();
-    const tasks = getTasksByManager(4);
+    const { tasks } = useTasks();
 
     return (
         <div className="w-full flex flex-col md:flex-row h-[90vh]">

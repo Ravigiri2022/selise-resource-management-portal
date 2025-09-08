@@ -3,12 +3,12 @@ class User < ApplicationRecord
   has_many :assigned_tasks, class_name: "Task", foreign_key: "assignedTo"
   has_many :created_tasks, class_name: "Task", foreign_key: "assignedBy"
 
-  validates :role, inclusion: { in: %w(manager employee) }
+  validates :role, inclusion: { in: %w[manager employee] }
   validates :name, :jobTitle, presence: true
 
   private
   def assign_random_color
-    def random_dark_color 
+    def random_dark_color
       r= rand(0..100)
       g= rand(0..100)
       b = rand(0..100)

@@ -4,7 +4,7 @@ import { useTasks } from "../context/TaskContext";
 import TaskDetails from "../components/TaskDetails";
 import GanttTable from "../components/GanttTable";
 import type { Task } from "../types";
-import { useUsers } from "../context/UserProvider";
+// import { useUsers } from "../context/UserProvider";
 import EmployeeWorkLoad from "../components/EmployeeWorkLoad";
 
 const tabs = ["Tasks", "Employees"];
@@ -12,9 +12,7 @@ const tabs = ["Tasks", "Employees"];
 const EmployeeDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
     const [selectedTask, setSelectedTask] = useState<Task | null>();
-    const { selectedUser } = useUsers();
-    const { getTasksByEmployee } = useTasks();
-    const tasks = getTasksByEmployee(selectedUser ? selectedUser?.id : 0);
+    const { tasks } = useTasks();
 
 
     return (
@@ -38,7 +36,9 @@ const EmployeeDashboard = () => {
                 {/* Tab Contents */}
                 {activeTab === "Tasks" && (
                     <div>
-                        {selectedTask ? <TaskDetails setTask={(value) => setSelectedTask(value)} data={selectedTask} /> : <TaskTable data={tasks} setTask={(value) => setSelectedTask(value)} />}
+                        {selectedTask ?
+                            <TaskDetails setTask={(value) => setSelectedTask(value)} data={selectedTask} /> :
+                            <TaskTable data={tasks} setTask={(value) => setSelectedTask(value)} />}
 
                     </div>
                 )}

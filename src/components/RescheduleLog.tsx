@@ -86,7 +86,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                         {/* Modal Content */}
                         <div className="p-5 space-y-4">
                             {logAction === "accepted" ? (
-                                <>
+                                <form onSubmit={() => handleSubmit(message, "accepted")}>
                                     <p className="text-center font-semibold">Changes Made:</p>
                                     <p className="text-center text-gray-600">
                                         New changes are recorded and saved.
@@ -134,14 +134,14 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                                             Cancel
                                         </button>
                                         <button className="bg-green-600 text-white px-4 py-1.5 rounded-lg hover:bg-green-500"
-                                            onClick={() => handleSubmit(message, "accepted")}>
+                                            type="submit">
 
                                             Confirm
                                         </button>
                                     </div>
-                                </>
+                                </form>
                             ) : (
-                                <>
+                                <form onClick={() => handleSubmit(message, "rejected")}>
                                     <p className="text-center font-semibold">
                                         Changes Not To Be Made:
                                     </p>
@@ -187,12 +187,12 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                                         </button>
                                         <button
                                             className="bg-red-600 text-white px-4 py-1.5 rounded-lg hover:bg-red-500"
-                                            onClick={() => handleSubmit(message, "rejected")}
+                                            type="submit"
                                         >
                                             Confirm
                                         </button>
                                     </div>
-                                </>
+                                </form>
                             )}
                         </div>
                     </div>
@@ -226,7 +226,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                             <div className="flex-1 space-y-1 text-sm">
                                 <p>
                                     <span className="font-semibold">Date:</span>{" "}
-                                    {log.createdAt}
+                                    {log.created_at}
                                 </p>
                                 <p>
                                     <span className="font-semibold">Initiated By:</span>{" "}

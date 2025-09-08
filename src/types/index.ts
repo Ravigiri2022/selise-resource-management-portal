@@ -13,7 +13,7 @@ export type resLog = {
   taskId: number;
   requestedBy: string;
   requestedById: number;
-  createdAt: string;
+  created_at: string;
   oldStartDate: string;
   oldEndDate: string;
   newStartDate: string;

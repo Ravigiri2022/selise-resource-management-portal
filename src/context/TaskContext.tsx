@@ -1,18 +1,15 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { Task, resLog } from "../types";
-import axios from "axios";
-import { API_URL } from "../../config.js"
+import { useUsers } from "./UserProvider";
+import { taskService, userService } from "../services/services";
+// import { API_URL } from "../../config.js"
 
 type TaskContextType = {
     tasks: Task[];
     fetchTasks: () => Promise<void>;
-    // addTask: (formData: any) => Promise<void>;
-    getTasksByManager: (managerId: number) => Task[];
-    getTasksByEmployee: (employeeId: number) => Task[];
+    fetchResLogs: (taskId: number) => Promise<resLog[]>;
     resLogs: resLog[];
-    getResLogsByTaskId: (taskId: number) => resLog[];
 };
-
 // eslint-disable-next-line react-refresh/only-export-components
 export const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
@@ -24,47 +21,44 @@ export const useTasks = () => {
 };
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
+    const { selectedUser } = useUsers();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [resLogs, setResLogs] = useState<resLog[]>([]);
     const fetchTasks = async () => {
         try {
-            const { data } = await axios.get<Task[]>(`${API_URL}/tasks`);
+            const data = await userService.getTaskById(selectedUser?.id);
+            // console.log(data, selectedUser?.id);
             setTasks(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
     };
-    const fetchResLogs = async () => {
+    const fetchResLogs = async (taskId: number) => {
         try {
-            const { data } = await axios.get<resLog[]>(`${API_URL}/rescheduleLogs`);
+            const data = await taskService.getResLogsById(taskId);
             setResLogs(data);
+            console.log("log", data);
+
+            return data
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
     };
 
-
-    //helpers
-    const getTasksByManager = (managerId: number) => tasks.filter((t) => Number(t.assignedBy) === Number(managerId));
-    const getTasksByEmployee = (employeeId: number) => tasks.filter((t) => Number(t.assignedTo) === Number(employeeId));
-
-    //Log helpers
-    const getResLogsByTaskId = (taskId: number) => resLogs.filter((t) => t.taskId === taskId);
-
     useEffect(() => {
-        fetchTasks();
-        fetchResLogs();
-    }, []);
+        if (selectedUser) {
+            fetchTasks();
+        }
+    }, [selectedUser]);
 
     return (
         <TaskContext.Provider
             value={{
                 tasks,
                 fetchTasks,
-                getTasksByEmployee,
-                getTasksByManager,
                 resLogs,
-                getResLogsByTaskId
+                fetchResLogs,
+
             }}
         >
             {children}
