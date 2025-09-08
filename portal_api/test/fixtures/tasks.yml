@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  assignedBy: 1
+  assignedTo: 1
+  startDate: 2025-09-07 18:29:40
+  endDate: 2025-09-07 18:29:40
+  status: MyString
+  priority: MyString
+  createdDate: 2025-09-07
+  pdfLink: MyString
+  githubLink: MyString
+  projectId: 1
+
+two:
+  title: MyString
+  description: MyText
+  assignedBy: 1
+  assignedTo: 1
+  startDate: 2025-09-07 18:29:40
+  endDate: 2025-09-07 18:29:40
+  status: MyString
+  priority: MyString
+  createdDate: 2025-09-07
+  pdfLink: MyString
+  githubLink: MyString
+  projectId: 1
