@@ -1,6 +1,7 @@
 // UserContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { User } from "../types";
+import { userService } from "../services/services"
 type toast = {
     id: number, type: string, message: string
 }
@@ -28,14 +29,23 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     });
     const [loading, setLoading] = useState(true);
 
-    const API_URL = "http://localhost:5500/users";  //<-------------url
 
     // Fetch all users once
     useEffect(() => {
-        fetch(API_URL)
-            .then((res) => res.json())
-            .then((data) => setUsers(data))
-            .finally(() => setLoading(false));
+        const fetchUsers = async () => {
+            try {
+                setLoading(true);
+                const data = await userService.getAll();
+                setUsers(data);
+
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
     }, []);
 
     // Select a user

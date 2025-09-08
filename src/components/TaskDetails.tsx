@@ -6,7 +6,7 @@ import { useUsers } from "../context/UserProvider";
 import RescheduleLog from "./RescheduleLog";
 import ProfileCircle from "./ProfileCircle";
 import { useEffect } from "react";
-import { taskService } from "../services/taskService";
+import { taskService } from "../services/services";
 import { useRef } from "react";
 
 

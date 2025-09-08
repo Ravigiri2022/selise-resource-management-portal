@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import ProfileCircle from "./ProfileCircle";
 import TextareaAutosize from "react-textarea-autosize";
 import type { FormValues } from "../types";
-import { taskService } from "../services/taskService";
+import { taskService } from "../services/services";
 import { useTasks } from "../context/TaskContext";
 
 interface AddTaskPopopProps {

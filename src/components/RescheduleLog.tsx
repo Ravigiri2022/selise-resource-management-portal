@@ -2,7 +2,7 @@ import { AiOutlineArrowRight, AiOutlineClose } from "react-icons/ai";
 import type { resLog, Task } from "../types";
 import { useUsers } from "../context/UserProvider";
 import { useState } from "react";
-import { logService, taskService } from "../services/taskService";
+import { logService, taskService } from "../services/services";
 import { useTasks } from "../context/TaskContext";
 
 const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, task }) => {
