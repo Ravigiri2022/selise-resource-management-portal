@@ -11,7 +11,7 @@ export const taskService = {
   },
 
   create: async (task: unknown) => {
-    const res = await api.post("/tasks", task);
+    const res = await api.post("api/v1/tasks", task);
     return res.data;
   },
 

@@ -25,47 +25,51 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
         control,
         name: "assignedTo",
     });
-
-    const generateId = () => Math.floor(1000 + Math.random() * 9000);
     const formatDateWithTime = (date: string, isEnd: boolean = false) => {
         if (!date) return null;
         return isEnd ? `${date} 23:59` : `${date} 00:00`;
     };
-    const getToday = () => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    };
+
     const loadingIdRef = useRef<number>(0);
 
     const onSubmit = async (data: FormValues) => {
         try {
             loadingIdRef.current = Number(addToast("loading", "Loading ...", 0))
             const payload = {
-                id: generateId(),
-                title: data.title,
-                description: data.desc,
-                assignedBy: Number(selectedUser?.id),
-                assignedTo: Number(data.assignedTo[0].userId),
-                startDate: formatDateWithTime(data.startDate, false),
-                endDate: formatDateWithTime(data.endDate, true),
-                status: "unseen",
-                priority: data.priority,
-                pdfLink: data.pdfLink,
-                githubLink: data.githubLink,
-                createdDate: getToday(),
+                task: {
+                    title: data.title,
+                    description: data.desc,
+                    assignedBy: Number(selectedUser?.id),
+                    assignedTo: Number(data.assignedTo[0].userId),
+                    startDate: formatDateWithTime(data.startDate, false),
+                    endDate: formatDateWithTime(data.endDate, true),
+                    priority: data.priority,
+                    pdfLink: data.pdfLink,
+                    githubLink: data.githubLink,
+                }
             };
 
-            const saved = await taskService.create(payload);
-            if (saved) {
-                console.log("Task created:", saved);
+            const response = await taskService.create(payload);
+            if (response) {
+                console.log("Task created:", response);
                 addToast("success", `Task ${data.title} Created`, 2000)
                 onClose();
                 reset();
                 fetchTasks();
             }
-        } catch (err) {
-            console.error(err);
-            addToast("error", "Error Creating Task", 2000);
+        } catch (error: error) {
+            console.error(error);
+            if (error.response) {
+                addToast("error", error.response.data.errors, 2000);
+            }
+            else if (error.request) {
+                addToast("error", "No response", 2000);
+            }
+            else {
+                addToast("error", `Error ${error.message}`, 2000);
+
+            }
+            // addToast("error", `${saved}`, 2000);
         } finally {
             if (loadingIdRef.current) {
                 removeToast(loadingIdRef.current);

@@ -5,7 +5,7 @@ class Task < ApplicationRecord
   # has_many :sub_topics, dependent: :destroy
   has_many :reschedule_logs, dependent: :destroy
 
-  validates :title, :description, :assignedTo, :assignedBy, :status, :priority, :startDate, :endDate, presence: true
+  validates :title, :description, :assignedTo, :assignedBy, :priority, :startDate, :endDate, :pdfLink, :githubLink, presence: true
   validates :status, inclusion: { in: %w[todo in-progress done reschedule unseen] }
   validates :priority, inclusion: { in: %w[low medium high] }
   validate :dates_order_check
