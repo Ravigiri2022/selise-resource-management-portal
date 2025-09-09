@@ -38,7 +38,7 @@ const ManagerDashboard = () => {
                         {selectedTask ? (
                             <TaskDetails
                                 setTask={(value) => setSelectedTask(value)}
-                                data={selectedTask}
+                                task={selectedTask}
                             />
                         ) : (
                             <div className="overflow-x-auto">

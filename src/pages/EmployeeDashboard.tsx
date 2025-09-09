@@ -37,7 +37,7 @@ const EmployeeDashboard = () => {
                 {activeTab === "Tasks" && (
                     <div>
                         {selectedTask ?
-                            <TaskDetails setTask={(value) => setSelectedTask(value)} data={selectedTask} /> :
+                            <TaskDetails setTask={(value) => setSelectedTask(value)} task={selectedTask} /> :
                             <TaskTable data={tasks} setTask={(value) => setSelectedTask(value)} />}
 
                     </div>

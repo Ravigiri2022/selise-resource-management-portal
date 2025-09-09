@@ -2,51 +2,50 @@ import { AiOutlineArrowRight, AiOutlineClose } from "react-icons/ai";
 import type { resLog, Task } from "../types";
 import { useUsers } from "../context/UserProvider";
 import { useState } from "react";
-import { logService, taskService } from "../services/services";
+import { logService } from "../services/services";
 import { useTasks } from "../context/TaskContext";
 
-const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, task }) => {
+const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task, setTask: (value: Task | null) => void }> = ({ resLogs, task, setTask }) => {
     const { users, selectedUser, addToast } = useUsers();
-    const { fetchTasks } = useTasks();
+    const { fetchResLogs, fetchTasks } = useTasks();
     const [logAction, setLogAction] = useState("");
     const [log, setLog] = useState<resLog | null>(null);
     const [message, setMessage] = useState<string>("");
+    const fetchDate = () => {
+        const today = new Date();
+        const formated = today.toISOString().split("T")[0]
+        return formated;
+    }
 
 
-    const handleSubmit = async (message: string, status: "accepted" | "rejected") => {
-        if (!message.trim()) {
-            addToast("error", "Need to Write the Message", 2000);
-            return;
-        }
+    const handleSubmit = async (
+        e: React.FormEvent<HTMLFormElement>,
+        message: string,
+        status: "accepted" | "rejected") => {
+        e.preventDefault(); // <-- Prevent page refresh
+
         if (!log) return;
         const updatedLog = {
-            ...log,
-            actionMesg: message,
-            status: status,
-            actionDate: Date.now(),
-            actionBy: selectedUser?.id,
+            updated_log: {
+                actionMesg: message,
+                status: status,
+                actionDate: fetchDate(),
+                actionBy: selectedUser?.id
+            },
         }
-        let updatedTask: Task;
-        if (status === "accepted") {
-            updatedTask = {
-                ...task,
-                status: "todo",
-            }
-        } else {
-            updatedTask = {
-                ...task,
-                status: "todo",
-                startDate: updatedLog.oldStartDate,
-                endDate: updatedLog.oldEndDate,
-            }
+        const updatedTask = {
+            ...task,
+            status: "todo" as Task["status"]
         }
 
         try {
-            await logService.update(log?.id, updatedLog)
-            setLog(updatedLog);
+            await logService.patch(log?.id, updatedLog);
+            fetchResLogs(task.id);
+            setLog(null);
+            setLogAction("");
             setMessage("");
-            await taskService.update(task.id, updatedTask)
             fetchTasks();
+            setTask(updatedTask);
             addToast("successfully ", `Task ${status}`, 2000)
 
         } catch (err) {
@@ -86,7 +85,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                         {/* Modal Content */}
                         <div className="p-5 space-y-4">
                             {logAction === "accepted" ? (
-                                <form onSubmit={() => handleSubmit(message, "accepted")}>
+                                <form onSubmit={(e) => handleSubmit(e, message, "accepted")}>
                                     <p className="text-center font-semibold">Changes Made:</p>
                                     <p className="text-center text-gray-600">
                                         New changes are recorded and saved.
@@ -141,7 +140,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
                                     </div>
                                 </form>
                             ) : (
-                                <form onClick={() => handleSubmit(message, "rejected")}>
+                                <form onSubmit={(e) => handleSubmit(e, message, "rejected")}>
                                     <p className="text-center font-semibold">
                                         Changes Not To Be Made:
                                     </p>

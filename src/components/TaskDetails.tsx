@@ -10,16 +10,16 @@ import { taskService } from "../services/services";
 import { useRef } from "react";
 
 
-const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void }> = ({ data, setTask }) => {
+const TaskDetails: React.FC<{ task: Task, setTask: (value: Task | null) => void }> = ({ task, setTask }) => {
     const { fetchTasks, fetchResLogs, resLogs } = useTasks();
     const { users, selectedUser, addToast } = useUsers();
-    const assByUser = users?.find((user) => Number(user.id) === Number(data.assignedBy));
-    const assToUser = users?.find((user) => Number(user.id) === Number(data.assignedTo));
+    const assByUser = users?.find((user) => Number(user.id) === Number(task.assignedBy));
+    const assToUser = users?.find((user) => Number(user.id) === Number(task.assignedTo));
     const toastShown = useRef(false);
     const handleStatusChange = async () => {
-        if (data.status === "todo") {
+        if (task.status === "todo") {
             try {
-                const res = await taskService.updateStatus(data.id, "in-progress");
+                const res = await taskService.updateStatus(task.id, "in-progress");
                 setTask(res);
                 fetchTasks();
                 addToast("success", "Marked as in-progress", 2000)
@@ -29,9 +29,9 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
 
             }
         }
-        else if (data.status === "in-progress") {
+        else if (task.status === "in-progress") {
             try {
-                const res = await taskService.updateStatus(data.id, "done");
+                const res = await taskService.updateStatus(task.id, "done");
                 setTask(res);
                 fetchTasks();
                 addToast("success", "Marked as in-progress", 2000)
@@ -44,12 +44,12 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
     }
 
     useEffect(() => {
-        fetchResLogs(Number(data.id));
+        fetchResLogs(Number(task.id));
         const updateStatusIfUnseen = async () => {
-            if (!data || !selectedUser) return;
-            if (data.status === "unseen" && selectedUser.role !== "manager" && !toastShown.current) {
+            if (!task || !selectedUser) return;
+            if (task.status === "unseen" && selectedUser.role !== "manager" && !toastShown.current) {
                 try {
-                    const updated = await taskService.updateStatus(data.id, "todo");
+                    const updated = await taskService.updateStatus(task.id, "todo");
                     setTask(updated);
                     fetchTasks();
                     addToast("success", "Marked as Seen", 2000)
@@ -75,10 +75,10 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
 
                 {/* Title + Dates */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <h2 className="text-3xl font-bold">{data.title}</h2>
+                    <h2 className="text-3xl font-bold">{task.title}</h2>
                     <div className="px-4 py-2 border rounded-lg shadow-sm bg-white text-sm">
-                        <p><span className="font-semibold">Start Date:</span> {data.startDate}</p>
-                        <p><span className="font-semibold">End Date:</span> {data.endDate}</p>
+                        <p><span className="font-semibold">Start Date:</span> {task.startDate}</p>
+                        <p><span className="font-semibold">End Date:</span> {task.endDate}</p>
                     </div>
                 </div>
 
@@ -88,13 +88,13 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                     <div className="flex items-center space-x-2">
                         <span className="font-semibold">Status:</span>
                         <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${data.status === "done" ?
-                                "bg-emerald-100 text-emerald-700" : data.status === "in-progress" ?
-                                    "bg-yellow-100 text-yellow-700" : data.status === "reschedule" ?
-                                        "bg-purple-200 text-purple-700" : data.status === "unseen" ?
+                            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${task.status === "done" ?
+                                "bg-emerald-100 text-emerald-700" : task.status === "in-progress" ?
+                                    "bg-yellow-100 text-yellow-700" : task.status === "reschedule" ?
+                                        "bg-purple-200 text-purple-700" : task.status === "unseen" ?
                                             "bg-gray-200 text-gray-700" : "bg-blue-200 text-blue-700"}`}
                         >
-                            {data.status}
+                            {task.status}
                         </span>
                     </div>
 
@@ -102,11 +102,11 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                     <div className="flex items-center space-x-2">
                         <span className="font-semibold">Priority:</span>
                         <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${data.priority === "high" ?
-                                "bg-red-200 text-red-700" : data.priority === "medium" ?
+                            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${task.priority === "high" ?
+                                "bg-red-200 text-red-700" : task.priority === "medium" ?
                                     "bg-orange-200 text-orange-700" : "bg-teal-200 text-teal-700"}`}
                         >
-                            {data.priority}
+                            {task.priority}
                         </span>
                     </div>
 
@@ -141,16 +141,16 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                             <span className="text-sm">{assByUser?.name}</span>
                         </div>
                         <span>:</span>
-                        {selectedUser?.role === "employee" && data.status !== "reschedule" && data.status !== "done" ? (
+                        {selectedUser?.role === "employee" && task.status !== "reschedule" && task.status !== "done" ? (
                             <div>
-                                <div className={`bg-gray-300 font-semibold gap-2 px-2 w-fit text-xs py-1 flex flex-col rounded-lg border cursor-pointer sm:text-base sm:flex-row md:text-sm hover:shadow-sm ${data.status === "todo" ? "bg-yellow-100 text-yellow-700" : data.status === "in-progress" ? "bg-green-200 text-green-700" : "border"}`}
+                                <div className={`bg-gray-300 font-semibold gap-2 px-2 w-fit text-xs py-1 flex flex-col rounded-lg border cursor-pointer sm:text-base sm:flex-row md:text-sm hover:shadow-sm ${task.status === "todo" ? "bg-yellow-100 text-yellow-700" : task.status === "in-progress" ? "bg-green-200 text-green-700" : "border"}`}
                                     onClick={() => handleStatusChange()}>
-                                    <span>Mark as:</span> <span>{data.status === "todo" ? "In-Progress" : "Done"}</span>
+                                    <span>Mark as:</span> <span>{task.status === "todo" ? "In-Progress" : "Done"}</span>
                                 </div>
                             </div>
                         ) : (
                             <div className="text-sm font-semibold text-gray-400 ">
-                                {data.status === "reschedule" ? "Waiting for the reschedule action" : "Marked as Done"}
+                                {task.status === "reschedule" ? "Waiting for the reschedule action" : "Marked as Done"}
                             </div>
                         )}
                     </div>
@@ -162,7 +162,7 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                     <div className="flex items-center gap-2 text-sm">
                         <AiOutlineFilePdf className="text-2xl" />
                         <a
-                            href={data.pdfLink}
+                            href={task.pdfLink}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:underline italic text-blue-600"
@@ -171,7 +171,7 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                         </a>
                         <AiOutlineLink
                             className="cursor-pointer hover:text-gray-600"
-                            onClick={() => navigator.clipboard.writeText(data.pdfLink)}
+                            onClick={() => navigator.clipboard.writeText(task.pdfLink)}
                         />
                     </div>
 
@@ -179,7 +179,7 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                     <div className="flex items-center gap-2 text-sm">
                         <AiFillGithub className="text-2xl" />
                         <a
-                            href={data.githubLink}
+                            href={task.githubLink}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:underline italic text-blue-600"
@@ -188,7 +188,7 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                         </a>
                         <AiOutlineLink
                             className="cursor-pointer hover:text-gray-600"
-                            onClick={() => navigator.clipboard.writeText(data.githubLink)}
+                            onClick={() => navigator.clipboard.writeText(task.githubLink)}
                         />
                     </div>
                 </div>
@@ -197,14 +197,14 @@ const TaskDetails: React.FC<{ data: Task, setTask: (value: Task | null) => void 
                 <div className="space-y-2">
                     <h2 className="font-semibold">Description:</h2>
                     <div className="border rounded-lg h-[30vh] p-3 bg-white overflow-y-auto shadow-sm">
-                        {data.description}
+                        {task.description}
                     </div>
                 </div>
 
                 {/* Gantt + Reschedule Logs */}
                 <div className="space-y-6">
-                    <GanttTable tasks={[data]} />
-                    <RescheduleLog resLogs={resLogs} task={data} />
+                    <GanttTable tasks={[task]} />
+                    <RescheduleLog resLogs={resLogs} task={task} setTask={setTask} />
                 </div>
             </div>
         </div>

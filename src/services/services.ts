@@ -36,6 +36,10 @@ export const logService = {
     const res = await api.put(`/rescheduleLogs/?id=${id}`, task);
     return res.data;
   },
+  patch: async (id: number, updated_log: unknown) => {
+    const res = await api.put(`api/v1/reschedule_logs/${id}`, updated_log);
+    return res.data;
+  },
 };
 
 // User Service

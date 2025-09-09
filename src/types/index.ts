@@ -21,7 +21,7 @@ export type resLog = {
   reason: string;
   status: "pending" | "accepted" | "rejected";
   actionBy?: number;
-  actionDate?: number;
+  actionDate?: string;
   actionMesg?: string;
 };
 
