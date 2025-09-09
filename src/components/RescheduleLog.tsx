@@ -5,9 +5,9 @@ import { useState } from "react";
 import { logService } from "../services/services";
 import { useTasks } from "../context/TaskContext";
 
-const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task, setTask: (value: Task | null) => void }> = ({ resLogs, task, setTask }) => {
+const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, task }) => {
     const { users, selectedUser, addToast } = useUsers();
-    const { fetchResLogs, fetchTasks } = useTasks();
+    const { fetchResLogs, fetchTasks, setSelectedTaskFn } = useTasks();
     const [logAction, setLogAction] = useState("");
     const [log, setLog] = useState<resLog | null>(null);
     const [message, setMessage] = useState<string>("");
@@ -45,7 +45,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task, setTask: (value: 
             setLogAction("");
             setMessage("");
             fetchTasks();
-            setTask(updatedTask);
+            setSelectedTaskFn(updatedTask);
             addToast("successfully ", `Task ${status}`, 2000)
 
         } catch (err) {

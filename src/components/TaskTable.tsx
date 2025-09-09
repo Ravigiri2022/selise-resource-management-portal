@@ -3,9 +3,12 @@ import type { Task } from "../types";
 import { useUsers } from "../context/UserProvider";
 import ProfileCircle from "./ProfileCircle";
 import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
+import { useTasks } from "../context/TaskContext";
 
-const TaskTable: React.FC<{ data: Task[], setTask: (value: Task) => void }> = ({ data, setTask }) => {
+const TaskTable = () => {
     const { users } = useUsers();
+    const { tasks, setSelectedTaskFn } = useTasks();
+    const data = tasks;
     const [globalFilter, setGlobalFilter] = useState("");
     const [groupBy, setGroupBy] = useState<"none" | "priority" | "status">("none");
     const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -105,7 +108,7 @@ const TaskTable: React.FC<{ data: Task[], setTask: (value: Task) => void }> = ({
                                     <tr
                                         key={task.id}
                                         className="hover:bg-gray-100 hover:rounded-lg"
-                                        onClick={() => setTask(task)}
+                                        onClick={() => { setSelectedTaskFn(task); console.log(task); }}
                                     >
                                         <td className="px-2 sm:px-4 py-2 border-t">{task.id}</td>
                                         <td className="px-2 sm:px-4 py-2 border-t">{task.title}</td>

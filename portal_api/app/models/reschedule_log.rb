@@ -7,7 +7,7 @@ class RescheduleLog < ApplicationRecord
   validates :status, inclusion: { in: %w[pending accepted rejected] }
 
   before_update :apply_reslog_logic_in_transaction, if: :will_save_change_to_status?
-
+  before_create :apply_reslog_create_logic_in_transaction
   private
   def apply_reslog_logic_in_transaction
     Task.transaction do
@@ -23,6 +23,15 @@ class RescheduleLog < ApplicationRecord
         status: "todo"
       )
        end
+    end
+  end
+  def apply_reslog_create_logic_in_transaction
+    Task.transaction do
+      task.update!(
+        status: "reschedule",
+        startDate: newStartDate,
+        endDate: newEndDate,
+      )
     end
   end
 end

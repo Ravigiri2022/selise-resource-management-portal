@@ -9,6 +9,8 @@ type TaskContextType = {
     fetchTasks: () => Promise<void>;
     fetchResLogs: (taskId: number) => Promise<resLog[]>;
     resLogs: resLog[];
+    selectedTask: Task | null;
+    setSelectedTaskFn: (task: Task | null) => void;
 };
 // eslint-disable-next-line react-refresh/only-export-components
 export const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -23,7 +25,11 @@ export const useTasks = () => {
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
     const { selectedUser } = useUsers();
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [resLogs, setResLogs] = useState<resLog[]>([]);
+    const setSelectedTaskFn = (task: Task | null) => {
+        setSelectedTask(task);
+    }
     const fetchTasks = async () => {
         try {
             const data = await userService.getTaskById(selectedUser?.id);
@@ -37,7 +43,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         try {
             const data = await taskService.getResLogsById(taskId);
             setResLogs(data);
-            console.log("log", data);
+            // console.log("log", data);
 
             return data
         } catch (err) {
@@ -58,7 +64,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
                 fetchTasks,
                 resLogs,
                 fetchResLogs,
-
+                setSelectedTaskFn,
+                selectedTask
             }}
         >
             {children}

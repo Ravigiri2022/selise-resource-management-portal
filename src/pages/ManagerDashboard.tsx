@@ -10,8 +10,7 @@ const tabs = ["Tasks", "Calendar", "Employees"];
 
 const ManagerDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
-    const [selectedTask, setSelectedTask] = useState<Task | null>();
-    const { tasks } = useTasks();
+    const { tasks, selectedTask } = useTasks();
 
     return (
         <div className="w-full flex flex-col md:flex-row h-[90vh]">
@@ -36,16 +35,10 @@ const ManagerDashboard = () => {
                 {activeTab === "Tasks" && (
                     <div className="w-full">
                         {selectedTask ? (
-                            <TaskDetails
-                                setTask={(value) => setSelectedTask(value)}
-                                task={selectedTask}
-                            />
+                            <TaskDetails />
                         ) : (
                             <div className="overflow-x-auto">
-                                <TaskTable
-                                    data={tasks}
-                                    setTask={(value) => setSelectedTask(value)}
-                                />
+                                <TaskTable />
                             </div>
                         )}
                     </div>

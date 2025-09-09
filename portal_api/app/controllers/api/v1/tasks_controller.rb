@@ -10,8 +10,6 @@ class Api::V1::TasksController < ApplicationController
     if @task.save
       render json: @task, each_serializer: TaskSerializer, status: :created
     else
-      # puts @task.errors.full_messages # ← logs to console
-
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
 
     end

@@ -27,6 +27,11 @@ export const taskService = {
 };
 
 export const logService = {
+  create: async (log: unknown) => {
+    const res = await api.post("/api/v1/reschedule_logs", log);
+    return res.data;
+  },
+
   getAll: async () => {
     const res = await api.get("/rescheduleLogs");
     return res.data;

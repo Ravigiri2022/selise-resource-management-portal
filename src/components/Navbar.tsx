@@ -3,9 +3,11 @@ import { useUsers } from '../context/UserProvider';
 import AddTask from './AddTask';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { FiLogOut } from 'react-icons/fi';
+import { useTasks } from '../context/TaskContext';
 
 export const Navbar = () => {
     const { selectedUser, deselectUser } = useUsers();
+    const { setSelectedTaskFn } = useTasks();
     const [isOpened, setIsOpened] = useState<boolean>(false);
     const closePopop = () => setIsOpened(false);
 
@@ -54,7 +56,7 @@ export const Navbar = () => {
                 </button>
                 {/* Desktop Text */}
                 <button
-                    onClick={deselectUser}
+                    onClick={() => { deselectUser(); setSelectedTaskFn(null); }}
                     className='hidden sm:inline-flex p-2 sm:px-3 sm:py-2 border rounded-lg shadow-lg hover:bg-gray-100'
                 >
                     Logout / Change User

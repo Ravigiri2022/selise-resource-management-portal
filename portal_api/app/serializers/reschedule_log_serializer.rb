@@ -10,10 +10,10 @@ class RescheduleLogSerializer < ActiveModel::Serializer
                object.oldStartDate&.strftime("%Y-%m-%d %H:%M")
              end
              def newStartDate
-               object.oldStartDate&.strftime("%Y-%m-%d %H:%M")
+               object.newStartDate&.strftime("%Y-%m-%d %H:%M")
              end
              def newEndDate
-               object.oldStartDate&.strftime("%Y-%m-%d %H:%M")
+               object.newStartDate&.strftime("%Y-%m-%d %H:%M")
              end
              def actionDate
                object.actionDate&.strftime("%Y-%m-%d")
