@@ -2,8 +2,25 @@ import React, { useMemo, useState } from "react";
 import type { Task } from "../types";
 import { useUsers } from "../context/UserProvider";
 import ProfileCircle from "./ProfileCircle";
-import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
+import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineDown, AiOutlineUp } from "react-icons/ai";
 import { useTasks } from "../context/TaskContext";
+
+type SortConfig = {
+    key: keyof Task;
+    direction: "asc" | "desc";
+};
+const columns: { key: keyof Task | "assignedTo"; label: string; className?: string }[] = [
+    { key: "id", label: "ID" },
+    { key: "title", label: "Title" },
+    { key: "assignedTo", label: "Employee" },
+    { key: "status", label: "Status" },
+    { key: "priority", label: "Priority" },
+    { key: "startDate", label: "Start Date", className: "hidden sm:table-cell font-mono text-xs" },
+    { key: "endDate", label: "End Date", className: "hidden sm:table-cell font-mono text-xs" },
+    { key: "projectId", label: "Project", className: "hidden md:table-cell" },
+    { key: "created_at", label: "Created At", className: "hidden md:table-cell" },
+];
+
 
 const TaskTable = () => {
     const { users } = useUsers();
@@ -13,6 +30,7 @@ const TaskTable = () => {
     const [groupBy, setGroupBy] = useState<"none" | "priority" | "status">("none");
     const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
     const [showUnseen, setShowUnseen] = useState(false);
+    const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
 
     const filteredTasks = useMemo(() => {
         let tasks = data;
@@ -28,16 +46,42 @@ const TaskTable = () => {
         return tasks;
     }, [data, globalFilter, showUnseen]);
 
+    // Sort tasks
+    const sortedTasks = useMemo(() => {
+        if (!sortConfig) return filteredTasks;
+        return [...filteredTasks].sort((a, b) => {
+            const aValue = a[sortConfig.key];
+            const bValue = b[sortConfig.key];
+
+            if (typeof aValue === "number" && typeof bValue === "number") {
+                return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
+            }
+
+            return sortConfig.direction === "asc"
+                ? String(aValue).localeCompare(String(bValue))
+                : String(bValue).localeCompare(String(aValue));
+        });
+    }, [filteredTasks, sortConfig]);
+
     const groupedData = useMemo(() => {
-        if (groupBy === "none") return { all: filteredTasks };
+        if (groupBy === "none") return { all: sortedTasks };
         const groups: Record<string, Task[]> = {};
-        filteredTasks.forEach(task => {
+        sortedTasks.forEach(task => {
             const key = task[groupBy];
             if (!groups[key]) groups[key] = [];
             groups[key].push(task);
         });
         return groups;
-    }, [groupBy, filteredTasks]);
+    }, [groupBy, sortedTasks]);
+
+    const handleSort = (key: keyof Task) => {
+        setSortConfig(prev => {
+            if (prev?.key === key) {
+                return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+            }
+            return { key, direction: "asc" };
+        });
+    };
 
     return (
         <div className="p-2 sm:p-4 w-full">
@@ -92,17 +136,21 @@ const TaskTable = () => {
                         <table className="min-w-full border-t border-gray-300 select-none text-xs sm:text-lg">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b">ID</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b">Title</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b">Employee</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b">Status</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b">Priority</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b hidden sm:table-cell">Start Date</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b hidden sm:table-cell">End Date</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b hidden md:table-cell">Project</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left border-b hidden md:table-cell">Reschedule</th>
+                                    {columns.map(col => (
+                                        <th
+                                            key={col.key}
+                                            className={`px-2 sm:px-4 py-2 text-left border-b cursor-pointer ${col.className || ""}`}
+                                            onClick={() => handleSort(col.key as keyof Task)}
+                                        >
+                                            <div className="flex items-center gap-1">
+                                                {col.label}
+                                                {sortConfig?.key === col.key && (sortConfig.direction === "asc" ? <AiOutlineArrowUp /> : <AiOutlineArrowDown />)}
+                                            </div>
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {tasks.map(task => (
                                     <tr
@@ -120,34 +168,30 @@ const TaskTable = () => {
                                                 <ProfileCircle
                                                     name={users.find(u => Number(u.id) === Number(task.assignedTo))?.name || ""}
                                                     colorHex={users.find(u => Number(u.id) === Number(task.assignedTo))?.colorHex || ""}
-                                                    size={40} // smaller on mobile
+                                                    size={40}
                                                 />
                                             </div>
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 border-t">
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-xs capitalize sm:text-base ${task.status === "done" ?
-                                                    "bg-emerald-100 text-emerald-700" : task.status === "in-progress" ?
-                                                        "bg-yellow-100 text-yellow-700" : task.status === "reschedule" ?
-                                                            "bg-purple-200 text-purple-700" : task.status === "unseen" ?
-                                                                "bg-gray-200 text-gray-700" : "bg-blue-200 text-blue-700"}`}
-                                            >
+                                            <span className={`px-2 py-1 rounded-full text-xs capitalize sm:text-base ${task.status === "done" ?
+                                                "bg-emerald-100 text-emerald-700" : task.status === "in-progress" ?
+                                                    "bg-yellow-100 text-yellow-700" : task.status === "reschedule" ?
+                                                        "bg-purple-200 text-purple-700" : task.status === "unseen" ?
+                                                            "bg-gray-200 text-gray-700" : "bg-blue-200 text-blue-700"}`}>
                                                 {task.status}
                                             </span>
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 border-t">
-                                            <span
-                                                className={`px-2 py-1 rounded-full capitalize text-xs sm:text-base ${task.priority === "high" ?
-                                                    "bg-red-200 text-red-700" : task.priority === "medium" ?
-                                                        "bg-orange-200 text-orange-700" : "bg-teal-200 text-teal-700"}`}
-                                            >
+                                            <span className={`px-2 py-1 rounded-full capitalize text-xs sm:text-base ${task.priority === "high" ?
+                                                "bg-red-200 text-red-700" : task.priority === "medium" ?
+                                                    "bg-orange-200 text-orange-700" : "bg-teal-200 text-teal-700"}`}>
                                                 {task.priority}
                                             </span>
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 border-t hidden sm:table-cell font-mono text-xs">{task.startDate}</td>
                                         <td className="px-2 sm:px-4 py-2 border-t hidden sm:table-cell font-mono text-xs">{task.endDate}</td>
                                         <td className="px-2 sm:px-4 py-2 border-t hidden md:table-cell">{task.projectId}</td>
-                                        <td className="px-2 sm:px-4 py-2 border-t hidden md:table-cell text-gray-400">Pending</td>
+                                        <td className="px-2 sm:px-4 py-2 border-t hidden md:table-cell text-gray-400">{task.created_at}</td>
                                     </tr>
                                 ))}
                             </tbody>

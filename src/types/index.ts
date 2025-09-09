@@ -35,7 +35,7 @@ export type Task = {
   endDate: string;
   status: "todo" | "in-progress" | "done" | "reschedule" | "unseen";
   priority: "low" | "medium" | "high";
-  createdDate: string;
+  created_at: string;
   pdfLink: string;
   githubLink: string;
   projectId: number;

@@ -6,6 +6,7 @@ import { logService } from "../services/services";
 import { useTasks } from "../context/TaskContext";
 
 const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, task }) => {
+    resLogs.sort((a, b) => b.id - a.id);
     const { users, selectedUser, addToast } = useUsers();
     const { fetchResLogs, fetchTasks, setSelectedTaskFn } = useTasks();
     const [logAction, setLogAction] = useState("");
