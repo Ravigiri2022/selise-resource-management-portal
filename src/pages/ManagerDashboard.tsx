@@ -6,7 +6,7 @@ import GanttTable from "../components/GanttTable";
 import type { Task } from "../types";
 import EmployeeList from "../components/EmployeeList";
 
-const tabs = ["Tasks", "Calendar", "Employees"];
+const tabs = ["Tasks", "Gantt Chart", "Employees"];
 
 const ManagerDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
@@ -44,7 +44,7 @@ const ManagerDashboard = () => {
                     </div>
                 )}
 
-                {activeTab === "Calendar" && (
+                {activeTab === "Gantt Chart" && (
                     <div className="overflow-x-auto">
                         <GanttTable tasks={tasks} />
                     </div>

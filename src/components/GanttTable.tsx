@@ -362,7 +362,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             </div>
 
             {/* Scrollable Gantt container */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto pb-4 w-fit bg-black">
                 <div
                     ref={ganttContainer}
                     style={{

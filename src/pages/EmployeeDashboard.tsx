@@ -7,7 +7,7 @@ import GanttTable from "../components/GanttTable";
 // import { useUsers } from "../context/UserProvider";
 import EmployeeWorkLoad from "../components/EmployeeWorkLoad";
 
-const tabs = ["Tasks", "Employees"];
+const tabs = ["Tasks", "Work Load"];
 
 const EmployeeDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
@@ -39,12 +39,8 @@ const EmployeeDashboard = () => {
 
                     </div>
                 )}
-                {activeTab === "Calander" && (
-                    <div>
-                        <GanttTable tasks={tasks} />
-                    </div>
-                )}
-                {activeTab === "Employees" && (
+
+                {activeTab === "Work Load" && (
                     <div>
                         <EmployeeWorkLoad tasks={tasks} />
                     </div>
