@@ -158,7 +158,7 @@ cd resource-management-portal
 
 7. **User Navigation**
 
-   ![Gantt Chart](./src/assets/images/Screenshot%202025-09-11%20at%206.09.28 PM.png)
+   ![Gantt Chart](./src/assets/gifs/user_nav.gif)
 
 ### Future Improvements
 
