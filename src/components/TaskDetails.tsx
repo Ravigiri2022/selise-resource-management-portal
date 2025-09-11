@@ -5,9 +5,11 @@ import { useTasks } from "../context/TaskContext";
 import { useUsers } from "../context/UserProvider";
 import RescheduleLog from "./RescheduleLog";
 import ProfileCircle from "./ProfileCircle";
-import { useEffect } from "react";
-import { taskService } from "../services/services";
+import { useEffect, useState } from "react";
+import { projectService, taskService } from "../services/services";
 import { useRef } from "react";
+import StatusLabel from "./StatusLabel";
+import type { Project } from "../types";
 
 
 const TaskDetails = () => {
@@ -16,6 +18,7 @@ const TaskDetails = () => {
     const assByUser = users?.find((user) => Number(user.id) === Number(selectedTask?.assignedBy));
     const assToUser = users?.find((user) => Number(user.id) === Number(selectedTask?.assignedTo));
     const toastShown = useRef(false);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const handleStatusChange = async () => {
         if (selectedTask?.status === "todo") {
             try {
@@ -47,9 +50,17 @@ const TaskDetails = () => {
         fetchResLogs(Number(selectedTask?.id));
         const updateStatusIfUnseen = async () => {
             if (!selectedTask || !selectedUser) return;
+            try {
+                const project = await projectService.getById(selectedTask?.projectId);
+                console.log(project);
+                setSelectedProject(project);
+            } catch (err) {
+                console.log(err);
+            }
             if (selectedTask?.status === "unseen" && selectedUser.role !== "manager" && !toastShown.current) {
                 try {
                     const updated = await taskService.updateStatus(selectedTask?.id, "todo");
+
                     setSelectedTaskFn(updated);
                     fetchTasks();
                     addToast("success", "Marked as Seen", 2000)
@@ -60,18 +71,24 @@ const TaskDetails = () => {
             }
         };
         updateStatusIfUnseen();
-    }, []);
+    }, [selectedTask, selectedUser]);
 
     return (
         <div className="p-3 w-full">
             <div className="overflow-y-auto relative space-y-6">
                 {/* Back button */}
-                <button
-                    onClick={() => setSelectedTaskFn(null)}
-                    className="bg-white sticky top-0 flex items-center space-x-1 px-3 py-1 rounded-full shadow-sm border hover:bg-gray-100 transition"
-                >
-                    <AiOutlineLeft /> <span>Back</span>
-                </button>
+                <div className="flex justify-between">
+                    <button
+                        onClick={() => setSelectedTaskFn(null)}
+                        className="bg-white sticky top-0 flex items-center space-x-1 px-3 py-1 rounded-full shadow-sm border hover:bg-gray-100 transition"
+                    >
+                        <AiOutlineLeft /> <span>Back</span>
+                    </button>
+                    <div className=" p-2 rounded-lg">
+                        <span className="font-semibold">Created At: </span>{selectedTask?.created_at}
+                    </div>
+                </div>
+
 
                 {/* Title + Dates */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -87,15 +104,9 @@ const TaskDetails = () => {
                     {/* Status */}
                     <div className="flex items-center space-x-2">
                         <span className="font-semibold">Status:</span>
-                        <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${selectedTask?.status === "done" ?
-                                "bg-emerald-100 text-emerald-700" : selectedTask?.status === "in-progress" ?
-                                    "bg-yellow-100 text-yellow-700" : selectedTask?.status === "reschedule" ?
-                                        "bg-purple-200 text-purple-700" : selectedTask?.status === "unseen" ?
-                                            "bg-gray-200 text-gray-700" : "bg-blue-200 text-blue-700"}`}
-                        >
-                            {selectedTask?.status}
-                        </span>
+                        {selectedTask?.status && (
+                            <StatusLabel status={selectedTask?.status} />
+                        )}
                     </div>
 
                     {/* Priority */}
@@ -153,6 +164,12 @@ const TaskDetails = () => {
                                 {selectedTask?.status === "reschedule" ? "Waiting for the reschedule action" : "Marked as Done"}
                             </div>
                         )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="font-semibold">Project Name: </span>
+                        <span className="px-2 py-1 shadow-sm bg-white rounded-full line-clamp-1">
+                            {selectedProject ? selectedProject.name : ""}
+                        </span>
                     </div>
                 </div>
 

@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.2"
 # Use sqlite3 as the database for Active Record
 # gem "sqlite3", ">= 2.1"
-gem 'pg'
+gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -21,7 +21,10 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
-gem 'active_model_serializers', '~> 0.10.0'
+gem "sidekiq"
+gem "sidekiq-scheduler"
+
+gem "active_model_serializers", "~> 0.10.0"
 
 
 # Reduces boot times through caching; required in config/boot.rb

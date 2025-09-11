@@ -8,6 +8,18 @@ export type User = {
   colorHex: string;
 };
 
+export interface Notification {
+  id: number;
+  message: string;
+  task_id: number | null;
+  read: boolean;
+}
+
+export interface Project {
+  id: number;
+  name: string;
+}
+
 export type resLog = {
   id: number;
   taskId: number;

@@ -47,7 +47,7 @@ const RescheduleLog: React.FC<{ resLogs: resLog[], task: Task }> = ({ resLogs, t
             setMessage("");
             fetchTasks();
             setSelectedTaskFn(updatedTask);
-            addToast("successfully ", `Task ${status}`, 2000)
+            addToast("success", `Task ${status}`, 2000)
 
         } catch (err) {
             console.log(err);

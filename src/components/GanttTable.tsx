@@ -38,7 +38,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
     const [zoomLevel, setZoomLevel] = useState<"Day" | "Week" | "Month">("Week");
     const { fetchResLogs, fetchTasks, setSelectedTaskFn } = useTasks();
 
-    /** ------------------ UTIL: FORMAT DATES ------------------ */
+    /** ------------------ UTIL: FORMAT STSRT DATES ------------------ */
     function formatForBackendStart(date: Date | string): string {
         const d = new Date(date);
         const year = d.getFullYear();
@@ -46,6 +46,8 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
         const day = String(d.getDate()).padStart(2, "0");
         return `${year}-${month}-${day} 00:00`;
     }
+
+    /** ------------------ UTIL: FORMAT END DATES ------------------ */
 
     function formatForBackendEnd(date: Date | string): string {
         const d = new Date(date);
@@ -77,6 +79,9 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
         gantt.clearAll();
         gantt.config.date_format = "%Y-%m-%d %H:%i";
         gantt.init(ganttContainer.current);
+        gantt.config.autosize = "y"; // keep vertical auto-height
+        gantt.config.fit_tasks = true; // try to fit tasks in visible area
+
 
         const ganttTasks: GanttTask[] = tasks.map((task) => ({
             id: task.id,
@@ -93,7 +98,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             assignedTo: task.assignedTo,
             $original_start: new Date(task.startDate),
             $original_end: new Date(task.endDate),
-            createdDate: task.createdDate,
+            createdDate: task.created_at,
             status: task.status,
             color:
                 task.status === "done"
@@ -243,7 +248,7 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
                 status: "reschedule",
                 pdfLink: popupTask.pdfLink,
                 githubLink: popupTask.githubLink,
-                createdDate: popupTask.createdDate,
+                created_at: popupTask.created_at,
                 projectId: popupTask.projectId,
             };
             // console.log(taskToSet);
@@ -362,15 +367,15 @@ const GanttTable: React.FC<Props> = ({ tasks }) => {
             </div>
 
             {/* Scrollable Gantt container */}
-            <div className="overflow-x-auto pb-4 w-fit bg-black">
+            {/* <div className="overflow-x-auto pb-4 w-fit bg-black"> */}
+            <div className="overflow-x-auto w-full">
                 <div
                     ref={ganttContainer}
-                    style={{
-                        width: "1200px",
-                        height: "70vh",
-                    }}
+                    className="min-w-[800px] w-full h-[70vh]"
                 />
             </div>
+
+            {/* </div> */}
 
             {/* Legend */}
             <div className="flex flex-wrap justify-center md:justify-end gap-3 border-t pt-3 mt-3">

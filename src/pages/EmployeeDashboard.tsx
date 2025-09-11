@@ -2,9 +2,6 @@ import { useState } from "react";
 import TaskTable from "../components/TaskTable";
 import { useTasks } from "../context/TaskContext";
 import TaskDetails from "../components/TaskDetails";
-import GanttTable from "../components/GanttTable";
-// import type { Task } from "../types";
-// import { useUsers } from "../context/UserProvider";
 import EmployeeWorkLoad from "../components/EmployeeWorkLoad";
 
 const tabs = ["Tasks", "Work Load"];

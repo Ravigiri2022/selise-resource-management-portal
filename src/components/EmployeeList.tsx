@@ -64,10 +64,10 @@ const EmployeeList = () => {
                         >
                             <AiOutlineLeft className="mr-1" /> Back
                         </div>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto mb-5">
                             <GanttTable tasks={tasks.filter((task) => task.assignedTo === Number(selected.id))} />
                         </div>
-                        <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
+                        <div className="bg-white rounded-xl shadow-lg p-4 mt-5 md:p-6">
                             <h1 className="text-xl font-bold mb-6">Statistical Data</h1>
 
                             <div className="flex flex-col lg:flex-row gap-6">

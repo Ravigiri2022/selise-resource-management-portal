@@ -11,6 +11,8 @@ type TaskContextType = {
     resLogs: resLog[];
     selectedTask: Task | null;
     setSelectedTaskFn: (task: Task | null) => void;
+    fetchTasksById: (userId: number | null) => Promise<void>;
+    showTasks: Task[]
 };
 // eslint-disable-next-line react-refresh/only-export-components
 export const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -25,6 +27,8 @@ export const useTasks = () => {
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
     const { selectedUser } = useUsers();
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [showTasks, setShowTasks] = useState<Task[]>([]);
+
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [resLogs, setResLogs] = useState<resLog[]>([]);
     const setSelectedTaskFn = (task: Task | null) => {
@@ -33,8 +37,20 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     const fetchTasks = async () => {
         try {
             const data = await userService.getTaskById(selectedUser?.id);
-            // console.log(data, selectedUser?.id);
             setTasks(data);
+        } catch (err) {
+            console.error("Failed to fetch tasks", err);
+        }
+    };
+
+    const fetchTasksById = async (userId: number | null) => {
+        if (userId === null) {
+            setShowTasks([]);
+            return
+        };
+        try {
+            const data = await userService.getTaskById(userId);
+            setShowTasks(data);
         } catch (err) {
             console.error("Failed to fetch tasks", err);
         }
@@ -65,7 +81,9 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
                 resLogs,
                 fetchResLogs,
                 setSelectedTaskFn,
-                selectedTask
+                selectedTask,
+                fetchTasksById,
+                showTasks,
             }}
         >
             {children}

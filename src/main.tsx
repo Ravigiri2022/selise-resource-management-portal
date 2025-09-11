@@ -6,7 +6,9 @@ import './index.css';
 import { UserProvider } from './context/UserProvider';
 import { TaskProvider } from './context/TaskContext';
 
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+
   <React.StrictMode>
     <BrowserRouter>
       <UserProvider>

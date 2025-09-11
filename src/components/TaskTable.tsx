@@ -4,6 +4,7 @@ import { useUsers } from "../context/UserProvider";
 import ProfileCircle from "./ProfileCircle";
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineDown, AiOutlineUp } from "react-icons/ai";
 import { useTasks } from "../context/TaskContext";
+import StatusLabel from "./StatusLabel";
 
 type SortConfig = {
     key: keyof Task;
@@ -155,7 +156,7 @@ const TaskTable = () => {
                                 {tasks.map(task => (
                                     <tr
                                         key={task.id}
-                                        className="hover:bg-gray-100 hover:rounded-lg"
+                                        className={`hover:bg-gray-100 hover:rounded-lg ${task.status === "unseen" ? "bg-gradient-to-r" : ""}`}
                                         onClick={() => { setSelectedTaskFn(task); console.log(task); }}
                                     >
                                         <td className="px-2 sm:px-4 py-2 border-t">{task.id}</td>
@@ -173,13 +174,7 @@ const TaskTable = () => {
                                             </div>
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 border-t">
-                                            <span className={`px-2 py-1 rounded-full text-xs capitalize sm:text-base ${task.status === "done" ?
-                                                "bg-emerald-100 text-emerald-700" : task.status === "in-progress" ?
-                                                    "bg-yellow-100 text-yellow-700" : task.status === "reschedule" ?
-                                                        "bg-purple-200 text-purple-700" : task.status === "unseen" ?
-                                                            "bg-gray-200 text-gray-700" : "bg-blue-200 text-blue-700"}`}>
-                                                {task.status}
-                                            </span>
+                                            <StatusLabel status={task.status} />
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 border-t">
                                             <span className={`px-2 py-1 rounded-full capitalize text-xs sm:text-base ${task.priority === "high" ?

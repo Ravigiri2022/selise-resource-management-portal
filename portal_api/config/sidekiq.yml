@@ -1,0 +1,5 @@
+:concurrency: 5
+:schedule:
+  task_deadline_notifier:
+    cron: "0 9 * * *"
+    class: "TaskDeadlineNotifierJob"

@@ -11,8 +11,13 @@ Rails.application.routes.draw do
           get :logs
         end
       end
-      resources :projects
+      resources :projects do
+        member do
+          get :tasks
+        end
+      end
       resources :reschedule_logs
+      resources :notifications
     end
   end
 end

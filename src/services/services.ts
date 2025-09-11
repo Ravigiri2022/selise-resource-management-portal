@@ -21,9 +21,6 @@ export const taskService = {
     });
     return res.data;
   },
-  //   delete: async (id: number) => {
-  //     await api.delete(`/tasks/${id}`);
-  //   },
 };
 
 export const logService = {
@@ -56,6 +53,25 @@ export const userService = {
 
   getTaskById: async (id: unknown) => {
     const res = await api.get(`/api/v1/users/${id}/tasks`);
+    return res.data;
+  },
+};
+
+export const projectService = {
+  getAll: async () => {
+    const res = await api.get("/api/v1/projects");
+    return res.data;
+  },
+  getTasksByProjectId: async (id: unknown) => {
+    const res = await api.get(`/api/v1/projects/${id}/tasks`);
+    return res.data;
+  },
+  create: async (project: unknown) => {
+    const res = await api.post("api/v1/projects", project);
+    return res.data;
+  },
+  getById: async (id: number) => {
+    const res = await api.get(`api/v1/projects/${id}`);
     return res.data;
   },
 };

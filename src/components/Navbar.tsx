@@ -13,7 +13,6 @@ export const Navbar = () => {
 
     return (
         <div className='p-3 sm:px-6 flex items-center justify-between border-b select-none h-auto sm:h-[10vh]'>
-
             {isOpened && <AddTask onClose={closePopop} />}
 
             {/* Logo / Title */}

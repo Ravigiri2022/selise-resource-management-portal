@@ -1,8 +1,8 @@
 class Api::V1::RescheduleLogsController < ApplicationController
     def create
       @res_log = RescheduleLog.new(new_reslog_params)
-       Rails.logger.info "Params: #{new_reslog_params.inspect}"
-  Rails.logger.info "Valid? #{@res_log.valid?}, Errors: #{@res_log.errors.full_messages.inspect}"
+      Rails.logger.info "Params: #{new_reslog_params.inspect}"
+      Rails.logger.info "Valid? #{@res_log.valid?}, Errors: #{@res_log.errors.full_messages.inspect}"
 
     if @res_log.save
       render json: @res_log, each_serializer: RescheduleLogSerializer, status: :created

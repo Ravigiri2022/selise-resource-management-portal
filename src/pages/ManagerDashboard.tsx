@@ -3,10 +3,11 @@ import TaskTable from "../components/TaskTable";
 import { useTasks } from "../context/TaskContext";
 import TaskDetails from "../components/TaskDetails";
 import GanttTable from "../components/GanttTable";
-import type { Task } from "../types";
+// import type { Task } from "../types";
 import EmployeeList from "../components/EmployeeList";
+import ProjectList from "../components/ProjectList";
 
-const tabs = ["Tasks", "Gantt Chart", "Employees"];
+const tabs = ["Tasks", "Gantt Chart", "Employees", "Project"];
 
 const ManagerDashboard = () => {
     const [activeTab, setActiveTab] = useState<string>(tabs[0]);
@@ -53,6 +54,11 @@ const ManagerDashboard = () => {
                 {activeTab === "Employees" && (
                     <div className="overflow-x-auto">
                         <EmployeeList />
+                    </div>
+                )}
+                {activeTab === "Project" && (
+                    <div className="overflow-x-auto">
+                        <ProjectList />
                     </div>
                 )}
             </div>
