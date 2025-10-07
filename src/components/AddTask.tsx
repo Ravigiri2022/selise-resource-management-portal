@@ -35,9 +35,15 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
     const loadingIdRef = useRef<number>(0);
 
     const onSubmit = async (data: FormValues) => {
+        console.log("selected", selectedProject);
+
         try {
-            if (!selectedProject) {
-                addToast("error", "Please select a project", 2000);
+            // if (!selectedProject) {
+            //     addToast("error", "Please select a project", 2000);
+            //     return;
+            // }
+            if (data.startDate > data.endDate) {
+                addToast("error", "Invalid End Date", 2000);
                 return;
             }
             loadingIdRef.current = Number(addToast("loading", "Loading ...", 0))
@@ -52,7 +58,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                     priority: data.priority,
                     pdfLink: data.pdfLink,
                     githubLink: data.githubLink,
-                    projectId: selectedProject?.id,
+                    projectId: selectedProject,
                 }
             };
 
@@ -88,8 +94,8 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
 
     const [showDropDown, setShowDropDown] = useState(false);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [showProjectDropDown, setShowProjectDropDown] = useState(false);
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    // const [showProjectDropDown, setShowProjectDropDown] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<string | null>(null);
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -205,7 +211,7 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                         </div>
                     </div>
 
-                    <div className="relative border border-gray-200 rounded-lg p-3 flex items-center justify-center"
+                    {/* <div className="relative border border-gray-200 rounded-lg p-3 flex items-center justify-center"
                         onClick={() => { setShowProjectDropDown(!showProjectDropDown) }}>
                         <p>{selectedProject ? selectedProject.name : "Select a Project"}</p>
                         {showProjectDropDown && (
@@ -226,6 +232,17 @@ const AddTask: React.FC<AddTaskPopopProps> = ({ onClose }) => {
                                 ))}
                             </div>
                         )}
+                    </div> */}
+
+                    <div className="flex flex-col">
+                        <label>Select a project</label>
+                        <select onChange={(e) => {
+                            setSelectedProject(e.target.value)
+                        }}>
+                            {projects.map((project) => (
+                                <option value={project.id} > {project.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Dates */}

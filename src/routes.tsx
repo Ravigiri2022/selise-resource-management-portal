@@ -25,17 +25,19 @@ export default function AppRoutes() {
                     !selectedUser ? (
                         <Navigate to="/login" replace />
                     ) : selectedUser.role === "manager" ? (
-                        <Navigate to="/manager" replace />
+                        <Navigate to="/manager/Tasks" replace />
                     ) : (
-                        <Navigate to="/employee" replace />
+                        <Navigate to="/employee/Tasks" replace />
                     )
                 }
             />
 
             <Route path="/login" element={selectedUser ? (<Navigate to="/" replace />) : <Login />} />
+            <Route path="/manager" element={<Navigate to="/manager/Tasks" replace />} />
+            <Route path="/employee" element={<Navigate to="/employee/Tasks" replace />} />
 
             <Route
-                path="/manager"
+                path="/manager/:tabName"
                 element={
                     <ProtectedRoute allowedRole="manager">
                         <ManagerDashboard />
@@ -44,7 +46,7 @@ export default function AppRoutes() {
             />
 
             <Route
-                path="/employee"
+                path="/employee/:tabName"
                 element={
                     <ProtectedRoute allowedRole="employee">
                         <EmployeeDashboard />

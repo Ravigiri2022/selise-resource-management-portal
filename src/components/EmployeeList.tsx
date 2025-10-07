@@ -11,6 +11,8 @@ const EmployeeList = () => {
     const { users } = useUsers();
     const { tasks } = useTasks();
     const [selected, setSelected] = useState<User>();
+    const [selectedDetails, setSelectedDetails] = useState<boolean>();
+
     const COLORS = ["#22c55e", "#eab308", "#3b82f6", "#a855f7", "#ef4444"];
 
     const counts = {
@@ -28,7 +30,22 @@ const EmployeeList = () => {
     }));
 
     return (
-        <div className="p-3 w-full">
+        <div className="p-3 w-full relative ">
+            {selectedDetails ? (
+                <div className="inset-0 absolute flex flex-col items-center justify-center  bg-black/50 z-50">
+                    <div className="z-60 bg-white text-lg border gap-2 p-3 group-hover:bg-green-400">
+                        <p className="text-2xl font-semibold mb-2">User Details</p>
+                        <p>ID: {selected?.id}</p>
+                        <p>Name: {selected?.name}</p>
+                        <p>Role: {selected?.role}</p>
+                        <p>JobTitle: {selected?.jobTitle}</p>
+
+                        <div className="border px-2 bg-red-600 text-white w-[100px] text-center mt-2 group-hover:bg-green-400 cursor-pointer" onClick={() => setSelectedDetails(false)}>Close</div>
+                    </div>
+
+
+                </div>
+            ) : ("")}
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">Employees</h2>
 
             <div className="w-full">
@@ -58,12 +75,20 @@ const EmployeeList = () => {
                     </div>
                 ) : (
                     <div>
-                        <div
-                            className="bg-white sticky top-0 text-sm sm:text-lg border max-w-fit mb-2 rounded-full px-2 sm:px-3 cursor-pointer flex items-center justify-center hover:shadow-sm transition transform active:scale-95"
-                            onClick={() => setSelected(undefined)}
-                        >
-                            <AiOutlineLeft className="mr-1" /> Back
+                        <div className="flex justify-between">
+                            <div
+                                className="bg-white sticky top-0 text-sm sm:text-lg border max-w-fit mb-2 rounded-full px-2 sm:px-3 cursor-pointer flex items-center justify-center hover:shadow-sm transition transform active:scale-95"
+                                onClick={() => setSelected(undefined)}
+                            >
+                                <AiOutlineLeft className="mr-1" /> Back
+                            </div>
+                            <div className="border rounded-lg flex items-center justify-center px-3"
+                                onClick={() => setSelectedDetails(true)}
+                            >
+                                Details
+                            </div>
                         </div>
+
                         <div className="overflow-x-auto mb-5">
                             <GanttTable tasks={tasks.filter((task) => task.assignedTo === Number(selected.id))} />
                         </div>
